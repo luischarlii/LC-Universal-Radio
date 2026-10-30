@@ -45,8 +45,22 @@ const supabaseRadio = window.supabase.createClient(
   SUPABASE_KEY
 );
 console.log("LC Universal Radio: Supabase conectado");
+const statusRadio = document.getElementById("supabase-status");
+
 supabaseRadio.storage
   .from("lc-radio-music")
+  .list()
+  .then(({ data, error }) => {
+    if (error) {
+      statusRadio.textContent = "Error de conexión: " + error.message;
+    } else {
+      statusRadio.textContent =
+        "Supabase conectado. Archivos encontrados: " + data.length;
+    }
+  })
+  .catch((error) => {
+    statusRadio.textContent = "Error: " + error.message;
+  });
   .list()
   .then(({ data, error }) => {
     if (error) {
