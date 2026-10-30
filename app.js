@@ -45,3 +45,13 @@ const supabaseRadio = window.supabase.createClient(
   SUPABASE_KEY
 );
 console.log("LC Universal Radio: Supabase conectado");
+supabaseRadio.storage
+  .from("lc-radio-music")
+  .list()
+  .then(({ data, error }) => {
+    if (error) {
+      console.error("Error de Supabase:", error.message);
+    } else {
+      console.log("LC Radio: lectura correcta", data);
+    }
+  });
