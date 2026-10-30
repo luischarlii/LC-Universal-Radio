@@ -40,7 +40,7 @@ const station = {
 window.LCRadio = station;
 
 // CONEXIÓN SUPABASE - LC UNIVERSAL RADIO
-const SUPABASE_URL = "https://tfwepffzhuyppsavmoqw.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://tfwepffzhuyppsavmoqw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_n0vNAh0oHBm99rjpF-Y-jQ_4ZNGaLQ4";
 const supabaseRadio = window.supabase.createClient(
   SUPABASE_URL,
