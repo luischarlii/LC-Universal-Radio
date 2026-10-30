@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>Administración - LC Universal Radio</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #101827;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      max-width: 550px;
+      margin: auto;
+    }
+
+    h1 {
+      color: #fbbf24;
+      text-align: center;
+    }
+
+    .panel {
+      background: #1e293b;
+      padding: 22px;
+      border-radius: 18px;
+      margin-top: 25px;
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 8px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #fbbf24;
+      color: #101827;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .note {
+      color: #94a3b8;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #fbbf24;
+    }
+  </style>
+</head>
+
+<body>
+<main>
+
+  <h1>LC UNIVERSAL RADIO</h1>
+  <p style="text-align:center">Panel de administración</p>
+
+  <section class="panel">
+
+    <h2>Configuración de transmisión</h2>
+
+    <label for="streamUrl">Dirección del servidor de radio</label>
+    <input
+      id="streamUrl"
+      type="url"
+      placeholder="https://servidor/stream"
+    >
+
+    <button id="save">Guardar configuración</button>
+
+    <p id="message" class="note">
+      Servidor todavía no configurado.
+    </p>
+
+  </section>
+
+  <section class="panel">
+
+    <h2>Modalidades</h2>
+
+    <p>✓ Radio automática 24/7</p>
+    <p>✓ Transmisión en vivo</p>
+    <p>✓ Reproductor público</p>
+
+    <p class="note">
+      Estas funciones se habilitarán al conectar
+      el servidor de transmisión.
+    </p>
+
+  </section>
+
+  <p style="text-align:center;margin-top:30px">
+    <a href="./index.html">Volver a la radio</a>
+  </p>
+
+</main>
+
+<script src="./app.js"></script>
+
+<script>
+  const input = document.getElementById("streamUrl");
+  const message = document.getElementById("message");
+
+  document.getElementById("save").addEventListener("click", () => {
+    const success = window.LCRadio.setStream(input.value.trim());
+
+    if (success) {
+      message.textContent =
+        "Dirección aceptada en esta sesión. Falta conectar el servidor.";
+    } else {
+      message.textContent = "Introduce una dirección HTTP o HTTPS válida.";
+    }
+  });
+</script>
+
+</body>
+</html>
