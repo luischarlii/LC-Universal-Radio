@@ -130,29 +130,6 @@
       margin-top: 8px;
     }
 
-    .volume-container {
-      margin-top: 25px;
-      text-align: left;
-    }
-
-    .volume-label {
-      display: flex;
-      justify-content: space-between;
-      color: #cbd5e1;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    #volume {
-      display: block;
-      width: 100%;
-      height: 28px;
-      margin: 0;
-      accent-color: #fbbf24;
-      cursor: pointer;
-      touch-action: pan-y;
-    }
-
     #message {
       color: #cbd5e1;
       font-size: 14px;
@@ -284,23 +261,6 @@
         </div>
       </div>
 
-      <div class="volume-container">
-        <div class="volume-label">
-          <span>🔊 Volumen</span>
-          <span id="volume-value">80%</span>
-        </div>
-
-        <input
-          id="volume"
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value="0.8"
-          aria-label="Control de volumen"
-        >
-      </div>
-
       <p id="message">
         Selecciona una modalidad de reproducción.
       </p>
@@ -338,8 +298,6 @@
   <script>
     const radio = document.getElementById("radio");
     const play = document.getElementById("play");
-    const volume = document.getElementById("volume");
-    const volumeValue = document.getElementById("volume-value");
     const message = document.getElementById("message");
     const stationStatus = document.getElementById("station-status");
     const currentSong = document.getElementById("current-song");
@@ -361,20 +319,6 @@
     let currentIndex = 0;
     let loading = false;
     let isSeeking = false;
-
-    // Control de volumen
-    function applyVolume() {
-      const selectedVolume = Number(volume.value);
-
-      radio.volume = selectedVolume;
-      volumeValue.textContent =
-        Math.round(selectedVolume * 100) + "%";
-    }
-
-    applyVolume();
-
-    volume.addEventListener("input", applyVolume);
-    volume.addEventListener("change", applyVolume);
 
     function showMessage(text) {
       message.textContent = text;
@@ -650,9 +594,6 @@
         radio.src = data.signedUrl;
         radio.load();
 
-        // Volver a aplicar el volumen seleccionado
-        applyVolume();
-
         await radio.play();
 
         currentSong.textContent =
@@ -684,7 +625,6 @@
         }
 
         radio.src = LIVE_STREAM_URL;
-        applyVolume();
 
         try {
           await radio.play();
@@ -701,7 +641,6 @@
 
       if (radio.paused && radio.src) {
         try {
-          applyVolume();
           await radio.play();
           updatePlayButton(true);
           return;
