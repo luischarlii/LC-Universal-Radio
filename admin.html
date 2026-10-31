@@ -5,197 +5,437 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101827">
-  <title>LC Universal Radio</title>
+  <title>Administración - LC Universal Radio</title>
+
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
+      padding: 20px;
       background: #101827;
       color: white;
-    }
-
-    header {
-      padding: 22px 16px;
-      text-align: center;
-      border-bottom: 1px solid #334155;
-    }
-
-    .logo {
-      color: #fbbf24;
-      font-size: 27px;
-      font-weight: bold;
-    }
-
-    header p {
-      color: #94a3b8;
-      margin-bottom: 0;
+      font-family: Arial, sans-serif;
     }
 
     main {
-      width: 100%;
-      max-width: 480px;
-      margin: 35px auto;
-      padding: 18px;
-    }
-
-    .player {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 22px;
-      padding: 25px 20px;
-      text-align: center;
-    }
-
-    .artwork {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border-radius: 16px;
-      background: linear-gradient(135deg,#312e81,#0f766e,#b45309);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 55px;
-      margin-bottom: 24px;
+      max-width: 600px;
+      margin: auto;
     }
 
     h1 {
-      font-size: 25px;
-      margin: 12px 0;
+      color: #fbbf24;
+      text-align: center;
     }
 
-    .subtitle {
-      color: #cbd5e1;
+    h2 { color: #fbbf24; }
+
+    .panel {
+      background: #1e293b;
+      padding: 22px;
+      border-radius: 18px;
+      margin-top: 22px;
     }
 
-    .status {
-      color: #4ade80;
-      font-size: 13px;
-      margin: 20px 0;
+    label {
+      display: block;
+      margin: 16px 0 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: white;
     }
 
     button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 14px;
+      border: none;
+      border-radius: 10px;
       background: #fbbf24;
       color: #101827;
-      border: none;
-      border-radius: 50px;
-      width: 76px;
-      height: 76px;
-      font-size: 30px;
-      cursor: pointer;
       font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
     }
 
-    .volume {
-      width: 100%;
-      margin-top: 25px;
-      accent-color: #fbbf24;
+    button.secondary {
+      background: #334155;
+      color: white;
     }
 
-    footer {
-      text-align: center;
-      color: #94a3b8;
+    button.delete {
+      width: auto;
+      margin: 0;
+      padding: 9px 12px;
+      background: #991b1b;
+      color: white;
       font-size: 12px;
-      padding: 25px;
     }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .note {
+      color: #94a3b8;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .status {
+      color: #fbbf24;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .song {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid #334155;
+    }
+
+    .song-name {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      font-size: 14px;
+    }
+
+    a { color: #fbbf24; }
+
+    .hidden { display: none; }
   </style>
 </head>
 
 <body>
+<main>
 
-  <header>
-    <div class="logo">LC UNIVERSAL RADIO</div>
-    <p>Tu música, tu estación</p>
-  </header>
+  <h1>LC UNIVERSAL RADIO</h1>
+  <p style="text-align:center">Panel de administración</p>
 
-  <main>
-    <section class="player">
+  <section class="panel">
+    <h2>Conexión</h2>
+    <p id="supabase-status" class="status">
+      Comprobando conexión con Supabase...
+    </p>
+    <p id="auth-status" class="note">
+      Comprueba tu sesión para administrar la música.
+    </p>
+  </section>
 
-      <div class="artwork">📻</div>
+  <section class="panel" id="login-panel">
+    <h2>Acceso administrativo</h2>
 
-      <h1>LC Universal Radio</h1>
-
-      <div class="subtitle">
-        Música para todos
-      </div>
-
-      <div class="status">
-        ● ESTACIÓN PREPARADA
-      </div>
-
-      <button id="play" aria-label="Reproducir">▶</button>
-
-      <audio id="radio" preload="none"></audio>
-
+    <form id="login-form">
+      <label for="email">Correo electrónico</label>
       <input
-        class="volume"
-        id="volume"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0.8"
-        aria-label="Volumen"
+        id="email"
+        type="email"
+        autocomplete="username"
+        required
+        placeholder="Tu correo de administrador"
       >
 
-      <p id="message">Esperando conexión de transmisión</p>
+      <label for="password">Contraseña</label>
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        required
+        placeholder="Tu contraseña"
+      >
 
-    </section>
-  </main>
+      <button id="login-button" type="submit">
+        Iniciar sesión
+      </button>
+    </form>
 
-  <footer>
-    LC Universal Radio · 2026
-  </footer>
+    <p id="login-message" class="status"></p>
+  </section>
 
-  <script>
-    const radio = document.getElementById("radio");
-    const play = document.getElementById("play");
-    const volume = document.getElementById("volume");
-    const message = document.getElementById("message");
+  <section class="panel hidden" id="admin-panel">
+    <h2>Biblioteca musical</h2>
 
-    radio.volume = Number(volume.value);
+    <p class="note">
+      Sube canciones de audio a la biblioteca privada de LC Universal Radio.
+    </p>
 
-    play.addEventListener("click", async () => {
-      if (radio.paused) {
-        if (!radio.src) {
-          message.textContent =
-            "La transmisión todavía no está configurada.";
+    <label for="music-files">Seleccionar canciones</label>
+    <input
+      id="music-files"
+      type="file"
+      accept=".mp3,.m4a,.aac,.ogg,.wav,.flac,audio/*"
+      multiple
+    >
+
+    <button id="upload-button" type="button">
+      Subir canciones
+    </button>
+
+    <p id="upload-message" class="status"></p>
+
+    <hr style="border-color:#334155;margin:24px 0">
+
+    <h2>Canciones almacenadas</h2>
+
+    <button id="refresh-button" class="secondary" type="button">
+      Actualizar biblioteca
+    </button>
+
+    <div id="song-list" style="margin-top:15px">
+      <p class="note">Todavía no se ha consultado la biblioteca.</p>
+    </div>
+
+    <button id="logout-button" class="secondary" type="button">
+      Cerrar sesión
+    </button>
+  </section>
+
+  <p style="text-align:center;margin-top:30px">
+    <a href="./index.html">Volver a la radio</a>
+  </p>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./app.js"></script>
+
+<script>
+(() => {
+  const BUCKET = "lc-radio-music";
+  const ALLOWED = ["mp3", "m4a", "aac", "ogg", "wav", "flac"];
+
+  const loginPanel = document.getElementById("login-panel");
+  const adminPanel = document.getElementById("admin-panel");
+  const authStatus = document.getElementById("auth-status");
+  const loginMessage = document.getElementById("login-message");
+  const uploadMessage = document.getElementById("upload-message");
+  const songList = document.getElementById("song-list");
+
+  let currentSession = null;
+
+  function showSession(session) {
+    currentSession = session;
+
+    loginPanel.classList.toggle("hidden", !!session);
+    adminPanel.classList.toggle("hidden", !session);
+
+    authStatus.textContent = session
+      ? "Sesión iniciada: " + session.user.email
+      : "No has iniciado sesión.";
+
+    if (session) {
+      loadFiles();
+    } else {
+      songList.textContent = "";
+    }
+  }
+
+  async function loadFiles() {
+    if (!currentSession) return;
+
+    songList.textContent = "Consultando biblioteca...";
+
+    const { data, error } = await supabaseRadio
+      .storage
+      .from(BUCKET)
+      .list("", {
+        limit: 100,
+        sortBy: { column: "name", order: "asc" }
+      });
+
+    if (error) {
+      songList.textContent = "Error: " + error.message;
+      return;
+    }
+
+    const files = (data || []).filter(item => {
+      if (item.id === null) return false;
+      const extension = item.name.split(".").pop().toLowerCase();
+      return ALLOWED.includes(extension);
+    });
+
+    songList.replaceChildren();
+
+    if (files.length === 0) {
+      songList.textContent = "La biblioteca todavía está vacía.";
+      return;
+    }
+
+    files.forEach(file => {
+      const row = document.createElement("div");
+      row.className = "song";
+
+      const name = document.createElement("span");
+      name.className = "song-name";
+      name.textContent = file.name;
+
+      const removeButton = document.createElement("button");
+      removeButton.className = "delete";
+      removeButton.type = "button";
+      removeButton.textContent = "Eliminar";
+
+      removeButton.addEventListener("click", async () => {
+        if (!confirm("¿Eliminar esta canción de la biblioteca?")) return;
+
+        removeButton.disabled = true;
+
+        const { error } = await supabaseRadio
+          .storage
+          .from(BUCKET)
+          .remove([file.name]);
+
+        if (error) {
+          alert("No se pudo eliminar: " + error.message);
+          removeButton.disabled = false;
           return;
         }
 
-        try {
-          await radio.play();
-          play.textContent = "Ⅱ";
-          message.textContent = "Conectado a la estación";
-        } catch {
-          message.textContent = "No se pudo iniciar la transmisión.";
-        }
-      } else {
-        radio.pause();
-        play.textContent = "▶";
-        message.textContent = "Transmisión pausada";
+        loadFiles();
+      });
+
+      row.append(name, removeButton);
+      songList.appendChild(row);
+    });
+  }
+
+  document.getElementById("login-form").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const button = document.getElementById("login-button");
+    button.disabled = true;
+    loginMessage.textContent = "Verificando acceso...";
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await supabaseRadio.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    button.disabled = false;
+
+    if (error) {
+      loginMessage.textContent = "No se pudo iniciar sesión: " + error.message;
+      return;
+    }
+
+    loginMessage.textContent = "Acceso correcto.";
+    showSession(data.session);
+  });
+
+  document.getElementById("upload-button").addEventListener("click", async () => {
+    if (!currentSession) return;
+
+    const input = document.getElementById("music-files");
+    const files = Array.from(input.files || []);
+
+    if (files.length === 0) {
+      uploadMessage.textContent = "Primero selecciona una o más canciones.";
+      return;
+    }
+
+    const button = document.getElementById("upload-button");
+    button.disabled = true;
+
+    let uploaded = 0;
+    let errors = [];
+
+    for (const file of files) {
+      const extension = file.name.split(".").pop().toLowerCase();
+
+      if (!ALLOWED.includes(extension)) {
+        errors.push(file.name + ": formato no permitido");
+        continue;
       }
+
+      const safeName = file.name
+        .normalize("NFKD")
+        .replace(/[^\w.-]+/g, "_");
+
+      const path = Date.now() + "-" + uploaded + "-" + safeName;
+
+      uploadMessage.textContent =
+        "Subiendo " + file.name + "...";
+
+      const { error } = await supabaseRadio
+        .storage
+        .from(BUCKET)
+        .upload(path, file, {
+          upsert: false,
+          contentType: file.type || "application/octet-stream"
+        });
+
+      if (error) {
+        errors.push(file.name + ": " + error.message);
+      } else {
+        uploaded++;
+      }
+    }
+
+    button.disabled = false;
+    input.value = "";
+
+    uploadMessage.textContent =
+      "Subidas correctamente: " + uploaded +
+      (errors.length ? ". Problemas: " + errors.join(" | ") : ".");
+
+    await loadFiles();
+  });
+
+  document.getElementById("refresh-button")
+    .addEventListener("click", loadFiles);
+
+  document.getElementById("logout-button")
+    .addEventListener("click", async () => {
+      const { error } = await supabaseRadio.auth.signOut();
+
+      if (error) {
+        alert("No se pudo cerrar sesión: " + error.message);
+        return;
+      }
+
+      showSession(null);
     });
 
-    volume.addEventListener("input", () => {
-      radio.volume = Number(volume.value);
-    });
+  supabaseRadio.auth.onAuthStateChange((_event, session) => {
+    currentSession = session;
+    loginPanel.classList.toggle("hidden", !!session);
+    adminPanel.classList.toggle("hidden", !session);
 
-    radio.addEventListener("ended", () => {
-      play.textContent = "▶";
-    });
+    authStatus.textContent = session
+      ? "Sesión iniciada: " + session.user.email
+      : "No has iniciado sesión.";
 
-    radio.addEventListener("error", () => {
-      play.textContent = "▶";
-      message.textContent = "Error al conectar con la transmisión.";
-    });
-  </script>
-<p id="supabase-status">Comprobando conexión con Supabase...</p>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js"></script>
+    if (session) {
+      setTimeout(loadFiles, 0);
+    } else {
+      songList.textContent = "";
+    }
+  });
+
+  supabaseRadio.auth.getSession().then(({ data, error }) => {
+    if (error) {
+      authStatus.textContent = "Error de sesión: " + error.message;
+      return;
+    }
+
+    showSession(data.session);
+  });
+
+})();
+</script>
+
 </body>
 </html>
