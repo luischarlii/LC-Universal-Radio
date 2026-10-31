@@ -166,7 +166,25 @@
 <p id="recovery-message" class="status"></p>
     <p id="login-message" class="status"></p>
   </section>
+<section class="panel hidden" id="recovery-panel">
+  <h2>Crear nueva contraseña</h2>
 
+  <label for="new-password">Nueva contraseña</label>
+  <input
+    id="new-password"
+    type="password"
+    autocomplete="new-password"
+    minlength="8"
+    required
+    placeholder="Mínimo 8 caracteres"
+  >
+
+  <button id="update-password" type="button">
+    Guardar nueva contraseña
+  </button>
+
+  <p id="recovery-update-message" class="status"></p>
+</section>
   <section class="panel hidden" id="admin-panel">
     <h2>Biblioteca musical</h2>
 
@@ -227,23 +245,51 @@
   const songList = document.getElementById("song-list");
 
   let currentSession = null;
+const recoveryPanel = document.getElementById("recovery-panel");
 
-  function showSession(session) {
-    currentSession = session;
+document.getElementById("update-password").addEventListener("click", async () => {
+  const password = document.getElementById("new-password").value;
+  const message = document.getElementById("recovery-update-message");
 
-    loginPanel.classList.toggle("hidden", !!session);
-    adminPanel.classList.toggle("hidden", !session);
-
-    authStatus.textContent = session
-      ? "Sesión iniciada: " + session.user.email
-      : "No has iniciado sesión.";
-
-    if (session) {
-      loadFiles();
-    } else {
-      songList.textContent = "";
-    }
+  if (password.length < 8) {
+    message.textContent = "La contraseña debe tener al menos 8 caracteres.";
+    return;
   }
+
+  message.textContent = "Actualizando contraseña...";
+
+  const { error } = await supabaseRadio.auth.updateUser({
+    password: password
+  });
+
+  if (error) {
+    message.textContent = "Error: " + error.message;
+    return;
+  }
+
+  message.textContent = "Contraseña actualizada correctamente.";
+});
+  let recoveryMode = false;
+
+function showSession(session) {
+  if (recoveryMode) return;
+
+  currentSession = session;
+
+  loginPanel.classList.toggle("hidden", !!session);
+  adminPanel.classList.toggle("hidden", !session);
+  recoveryPanel.classList.add("hidden");
+
+  authStatus.textContent = session
+    ? "Sesión iniciada: " + session.user.email
+    : "No has iniciado sesión.";
+
+  if (session) {
+    loadFiles();
+  } else {
+    songList.textContent = "";
+  }
+}
 
   async function loadFiles() {
     if (!currentSession) return;
@@ -338,7 +384,25 @@
     loginMessage.textContent = "Acceso correcto.";
     showSession(data.session);
   });
+document.getElementById("forgot-password").addEventListener("click", async () => {
+  const email = document.getElementById("email").value.trim();
+  const message = document.getElementById("recovery-message");
 
+  if (!email) {
+    message.textContent = "Primero escribe tu correo electrónico.";
+    return;
+  }
+
+  message.textContent = "Enviando solicitud...";
+
+  const { error } = await supabaseRadio.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+
+  message.textContent = error
+    ? "Error: " + error.message
+    : "Solicitud enviada. Revisa tu correo electrónico.";
+});
   document.getElementById("upload-button").addEventListener("click", async () => {
     if (!currentSession) return;
 
@@ -413,21 +477,32 @@
       showSession(null);
     });
 
-  supabaseRadio.auth.onAuthStateChange((_event, session) => {
+  supabaseRadio.auth.onAuthStateChange((event, session) => {
+  if (event === "PASSWORD_RECOVERY") {
+    recoveryMode = true;
     currentSession = session;
-    loginPanel.classList.toggle("hidden", !!session);
-    adminPanel.classList.toggle("hidden", !session);
 
-    authStatus.textContent = session
-      ? "Sesión iniciada: " + session.user.email
-      : "No has iniciado sesión.";
+    loginPanel.classList.add("hidden");
+    adminPanel.classList.add("hidden");
+    recoveryPanel.classList.remove("hidden");
 
-    if (session) {
-      setTimeout(loadFiles, 0);
-    } else {
-      songList.textContent = "";
-    }
-  });
+    authStatus.textContent =
+      "Enlace de recuperación verificado. Crea tu contraseña nueva.";
+
+    return;
+  }
+
+  if (event === "USER_UPDATED" && recoveryMode) {
+    recoveryMode = false;
+    recoveryPanel.classList.add("hidden");
+    showSession(session);
+    return;
+  }
+
+  if (!recoveryMode) {
+    showSession(session);
+  }
+});
 
   supabaseRadio.auth.getSession().then(({ data, error }) => {
     if (error) {
