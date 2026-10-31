@@ -8,7 +8,9 @@
   <title>LC Universal Radio</title>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -67,7 +69,9 @@
       margin: 12px 0;
     }
 
-    .subtitle { color: #cbd5e1; }
+    .subtitle {
+      color: #cbd5e1;
+    }
 
     .mode-selector {
       display: flex;
@@ -112,6 +116,31 @@
       font-weight: bold;
     }
 
+    .progress-container {
+      margin-top: 22px;
+      text-align: left;
+    }
+
+    #progress {
+      width: 100%;
+      margin: 0;
+      accent-color: #fbbf24;
+      cursor: pointer;
+    }
+
+    #progress:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      color: #cbd5e1;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
     .volume {
       width: 100%;
       margin-top: 25px;
@@ -145,7 +174,9 @@
       font-size: 13px;
     }
 
-    #song-list li { margin: 8px 0; }
+    #song-list li {
+      margin: 8px 0;
+    }
 
     .song-item {
       width: 100%;
@@ -160,13 +191,13 @@
       cursor: pointer;
     }
 
-.song-item.active {
-  background: #1e293b;
-  border: 1px solid #fbbf24;
-  border-left: 5px solid #fbbf24;
-  color: #fbbf24;
-  font-weight: bold;
-}
+    .song-item.active {
+      background: #1e293b;
+      border: 1px solid #fbbf24;
+      border-left: 5px solid #fbbf24;
+      color: #fbbf24;
+      font-weight: bold;
+    }
 
     .secondary-button {
       width: 100%;
@@ -232,6 +263,24 @@
 
       <audio id="radio" preload="none"></audio>
 
+      <div class="progress-container">
+        <input
+          id="progress"
+          type="range"
+          min="0"
+          max="100"
+          step="0.1"
+          value="0"
+          disabled
+          aria-label="Avance de la canción"
+        >
+
+        <div class="time-display">
+          <span id="current-time">0:00</span>
+          <span id="duration">0:00</span>
+        </div>
+      </div>
+
       <input
         class="volume"
         id="volume"
@@ -290,6 +339,10 @@
     const autoMode = document.getElementById("auto-mode");
     const refreshLibrary = document.getElementById("refresh-library");
 
+    const progress = document.getElementById("progress");
+    const currentTime = document.getElementById("current-time");
+    const durationDisplay = document.getElementById("duration");
+
     const BUCKET = "lc-radio-music";
     const LIVE_STREAM_URL = "";
 
@@ -297,12 +350,86 @@
     let songs = [];
     let currentIndex = 0;
     let loading = false;
+    let isSeeking = false;
 
     radio.volume = Number(volume.value);
 
     function showMessage(text) {
       message.textContent = text;
     }
+
+    function formatTime(seconds) {
+      if (!Number.isFinite(seconds) || seconds < 0) {
+        return "0:00";
+      }
+
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.floor(seconds % 60);
+
+      return minutes + ":" +
+        String(remainingSeconds).padStart(2, "0");
+    }
+
+    function resetProgress() {
+      progress.value = 0;
+      progress.disabled = true;
+      currentTime.textContent = "0:00";
+      durationDisplay.textContent = "0:00";
+      isSeeking = false;
+    }
+
+    function updateProgress() {
+      if (isSeeking) return;
+
+      const duration = radio.duration;
+      const current = radio.currentTime;
+
+      if (Number.isFinite(duration) && duration > 0) {
+        progress.disabled = false;
+        progress.value = (current / duration) * 100;
+
+        currentTime.textContent = formatTime(current);
+        durationDisplay.textContent = formatTime(duration);
+      } else {
+        progress.disabled = true;
+        progress.value = 0;
+        currentTime.textContent = formatTime(current);
+        durationDisplay.textContent =
+          radio.src && currentMode === "live" ? "EN VIVO" : "0:00";
+      }
+    }
+
+    progress.addEventListener("input", () => {
+      if (
+        Number.isFinite(radio.duration) &&
+        radio.duration > 0
+      ) {
+        isSeeking = true;
+
+        const targetTime =
+          (Number(progress.value) / 100) * radio.duration;
+
+        currentTime.textContent = formatTime(targetTime);
+      }
+    });
+
+    progress.addEventListener("change", () => {
+      if (
+        Number.isFinite(radio.duration) &&
+        radio.duration > 0
+      ) {
+        radio.currentTime =
+          (Number(progress.value) / 100) * radio.duration;
+      }
+
+      isSeeking = false;
+      updateProgress();
+    });
+
+    radio.addEventListener("timeupdate", updateProgress);
+    radio.addEventListener("loadedmetadata", updateProgress);
+    radio.addEventListener("durationchange", updateProgress);
+    radio.addEventListener("seeked", updateProgress);
 
     function updatePlayButton(isPlaying) {
       play.textContent = isPlaying ? "Ⅱ" : "▶";
@@ -325,6 +452,7 @@
       radio.removeAttribute("src");
       radio.load();
       updatePlayButton(false);
+      resetProgress();
     }
 
     function changeMode(mode) {
@@ -336,6 +464,7 @@
 
       if (mode === "live") {
         stationStatus.textContent = "● RADIO EN VIVO";
+
         showMessage(
           LIVE_STREAM_URL
             ? "Listo para conectar con la estación."
@@ -413,6 +542,7 @@
 
         if (songs.length === 0) {
           currentIndex = 0;
+
           songList.innerHTML =
             "<li>No hay canciones disponibles.</li>";
 
@@ -486,6 +616,8 @@
       showMessage("Preparando: " + song.name);
 
       try {
+        resetProgress();
+
         const { data, error } = await supabaseRadio
           .storage
           .from(BUCKET)
