@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101827">
   <title>LC Universal Radio</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -72,17 +73,40 @@
       color: #cbd5e1;
     }
 
+    .mode-selector {
+      display: flex;
+      gap: 8px;
+      margin: 22px 0;
+    }
+
+    .mode {
+      flex: 1;
+      width: auto;
+      height: auto;
+      min-height: 48px;
+      padding: 10px;
+      border-radius: 12px;
+      background: #334155;
+      color: white;
+      font-size: 13px;
+    }
+
+    .mode.active {
+      background: #fbbf24;
+      color: #101827;
+    }
+
     .status {
       color: #4ade80;
       font-size: 13px;
       margin: 20px 0;
     }
 
-    button {
+    #play {
       background: #fbbf24;
       color: #101827;
       border: none;
-      border-radius: 50px;
+      border-radius: 50%;
       width: 76px;
       height: 76px;
       font-size: 30px;
@@ -94,6 +118,56 @@
       width: 100%;
       margin-top: 25px;
       accent-color: #fbbf24;
+    }
+
+    #message {
+      color: #cbd5e1;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    .library {
+      margin-top: 25px;
+      text-align: left;
+      background: #101827;
+      border-radius: 14px;
+      padding: 15px;
+    }
+
+    .library h2 {
+      font-size: 17px;
+      margin-top: 0;
+      color: #fbbf24;
+    }
+
+    #song-list {
+      padding-left: 20px;
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
+    #song-list li {
+      margin: 10px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .secondary-button {
+      width: 100%;
+      height: auto;
+      min-height: 42px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-top: 12px;
+      background: #334155;
+      color: white;
+    }
+
+    #supabase-status {
+      color: #94a3b8;
+      font-size: 12px;
+      text-align: center;
+      padding: 10px;
+      overflow-wrap: anywhere;
     }
 
     footer {
@@ -123,7 +197,17 @@
         Música para todos
       </div>
 
-      <div class="status">
+      <div class="mode-selector">
+        <button id="live-mode" class="mode active">
+          🔴 Radio en vivo
+        </button>
+
+        <button id="auto-mode" class="mode">
+          🎵 Música automática
+        </button>
+      </div>
+
+      <div class="status" id="station-status">
         ● ESTACIÓN PREPARADA
       </div>
 
@@ -142,59 +226,359 @@
         aria-label="Volumen"
       >
 
-      <p id="message">Esperando conexión de transmisión</p>
+      <p id="message">
+        Selecciona una modalidad de reproducción.
+      </p>
+
+      <section class="library">
+        <h2>🎵 Biblioteca musical</h2>
+
+        <p id="current-song">
+          Ninguna canción seleccionada.
+        </p>
+
+        <ol id="song-list">
+          <li>La biblioteca todavía no se ha cargado.</li>
+        </ol>
+
+        <button
+          id="refresh-library"
+          class="secondary-button"
+        >
+          Actualizar biblioteca
+        </button>
+      </section>
 
     </section>
   </main>
 
+  <p id="supabase-status">
+    Comprobando conexión con Supabase...
+  </p>
+
   <footer>
     LC Universal Radio · 2026
   </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./app.js"></script>
 
   <script>
     const radio = document.getElementById("radio");
     const play = document.getElementById("play");
     const volume = document.getElementById("volume");
     const message = document.getElementById("message");
+    const stationStatus = document.getElementById("station-status");
+    const currentSong = document.getElementById("current-song");
+    const songList = document.getElementById("song-list");
+
+    const liveMode = document.getElementById("live-mode");
+    const autoMode = document.getElementById("auto-mode");
+    const refreshLibrary = document.getElementById("refresh-library");
+
+    const BUCKET = "lc-radio-music";
+
+    // Agregaremos aquí la URL de la estación en vivo
+    // cuando tengas una dirección de transmisión.
+    const LIVE_STREAM_URL = "";
+
+    let currentMode = "live";
+    let songs = [];
+    let currentIndex = 0;
+    let loading = false;
 
     radio.volume = Number(volume.value);
 
-    play.addEventListener("click", async () => {
-      if (radio.paused) {
-        if (!radio.src) {
-          message.textContent =
-            "La transmisión todavía no está configurada.";
+    function showMessage(text) {
+      message.textContent = text;
+    }
+
+    function updatePlayButton(isPlaying) {
+      play.textContent = isPlaying ? "Ⅱ" : "▶";
+      play.setAttribute(
+        "aria-label",
+        isPlaying ? "Pausar" : "Reproducir"
+      );
+    }
+
+    function stopPlayback() {
+      radio.pause();
+      radio.removeAttribute("src");
+      radio.load();
+      updatePlayButton(false);
+    }
+
+    function changeMode(mode) {
+      stopPlayback();
+
+      currentMode = mode;
+
+      liveMode.classList.toggle("active", mode === "live");
+      autoMode.classList.toggle("active", mode === "auto");
+
+      if (mode === "live") {
+        stationStatus.textContent = "● RADIO EN VIVO";
+        showMessage(
+          LIVE_STREAM_URL
+            ? "Listo para conectar con la estación."
+            : "La dirección de radio en vivo todavía no está configurada."
+        );
+      } else {
+        stationStatus.textContent = "● MÚSICA AUTOMÁTICA";
+        showMessage("Modo de música automática seleccionado.");
+        loadLibrary();
+      }
+    }
+
+    async function getAudioFiles(path = "") {
+      const { data, error } = await supabaseRadio
+        .storage
+        .from(BUCKET)
+        .list(path, {
+          limit: 100,
+          sortBy: {
+            column: "name",
+            order: "asc"
+          }
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      let files = [];
+
+      for (const item of data || []) {
+        const itemPath = path
+          ? path + "/" + item.name
+          : item.name;
+
+        if (item.id === null) {
+          const nestedFiles = await getAudioFiles(itemPath);
+          files = files.concat(nestedFiles);
+        } else {
+          const extension = item.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+          if (
+            ["mp3", "m4a", "aac", "ogg", "wav", "flac"]
+              .includes(extension)
+          ) {
+            files.push({
+              name: item.name,
+              path: itemPath
+            });
+          }
+        }
+      }
+
+      return files;
+    }
+
+    async function loadLibrary() {
+      if (loading) return;
+
+      if (typeof supabaseRadio === "undefined") {
+        showMessage("No se encontró la conexión con Supabase.");
+        return;
+      }
+
+      loading = true;
+      showMessage("Buscando canciones en Supabase...");
+      songList.innerHTML = "<li>Cargando biblioteca...</li>";
+
+      try {
+        songs = await getAudioFiles();
+
+        songList.innerHTML = "";
+
+        if (songs.length === 0) {
+          songList.innerHTML =
+            "<li>No hay canciones disponibles.</li>";
+
+          currentSong.textContent =
+            "Ninguna canción seleccionada.";
+
+          showMessage(
+            "Biblioteca vacía. Primero debes subir canciones."
+          );
+
           return;
         }
 
+        songs.forEach((song, index) => {
+          const li = document.createElement("li");
+          li.textContent = song.name;
+          songList.appendChild(li);
+        });
+
+        currentIndex = 0;
+
+        showMessage(
+          "Biblioteca cargada. Canciones encontradas: " +
+          songs.length
+        );
+
+      } catch (error) {
+        songList.innerHTML =
+          "<li>No se pudo cargar la biblioteca.</li>";
+
+        showMessage("Error al consultar música: " + error.message);
+
+      } finally {
+        loading = false;
+      }
+    }
+
+    async function playAutomaticSong() {
+      if (songs.length === 0) {
+        await loadLibrary();
+      }
+
+      if (songs.length === 0) {
+        showMessage("No hay canciones para reproducir.");
+        return;
+      }
+
+      if (currentIndex >= songs.length) {
+        currentIndex = 0;
+      }
+
+      const song = songs[currentIndex];
+
+      showMessage("Preparando: " + song.name);
+
+      try {
+        const { data, error } = await supabaseRadio
+          .storage
+          .from(BUCKET)
+          .createSignedUrl(song.path, 3600);
+
+        if (error) {
+          throw error;
+        }
+
+        radio.src = data.signedUrl;
+        radio.load();
+
+        await radio.play();
+
+        currentSong.textContent =
+          "Reproduciendo: " + song.name;
+
+        stationStatus.textContent = "● REPRODUCIENDO MÚSICA";
+
+        showMessage("Reproduciendo canción " +
+          (currentIndex + 1) + " de " + songs.length);
+
+        updatePlayButton(true);
+
+      } catch (error) {
+        showMessage("Error al reproducir: " + error.message);
+        updatePlayButton(false);
+      }
+    }
+
+    async function startPlayback() {
+      if (currentMode === "live") {
+        if (!LIVE_STREAM_URL) {
+          showMessage(
+            "Radio en vivo pendiente de configurar una URL de transmisión."
+          );
+          return;
+        }
+
+        radio.src = LIVE_STREAM_URL;
+
         try {
           await radio.play();
-          play.textContent = "Ⅱ";
-          message.textContent = "Conectado a la estación";
-        } catch {
-          message.textContent = "No se pudo iniciar la transmisión.";
+          updatePlayButton(true);
+          stationStatus.textContent = "● RADIO EN VIVO";
+          showMessage("Conectado a la estación en vivo.");
+        } catch (error) {
+          showMessage("No se pudo iniciar la transmisión.");
+          updatePlayButton(false);
         }
-      } else {
-        radio.pause();
-        play.textContent = "▶";
-        message.textContent = "Transmisión pausada";
+
+        return;
       }
+
+      if (radio.paused && radio.src) {
+        try {
+          await radio.play();
+          updatePlayButton(true);
+          return;
+        } catch (error) {
+          showMessage("No se pudo reanudar la canción.");
+        }
+      }
+
+      await playAutomaticSong();
+    }
+
+    play.addEventListener("click", async () => {
+      if (!radio.paused) {
+        radio.pause();
+        updatePlayButton(false);
+        showMessage("Reproducción pausada.");
+        return;
+      }
+
+      await startPlayback();
     });
 
     volume.addEventListener("input", () => {
       radio.volume = Number(volume.value);
     });
 
-    radio.addEventListener("ended", () => {
-      play.textContent = "▶";
+    liveMode.addEventListener("click", () => {
+      changeMode("live");
+    });
+
+    autoMode.addEventListener("click", () => {
+      changeMode("auto");
+    });
+
+    refreshLibrary.addEventListener("click", async () => {
+      await loadLibrary();
+    });
+
+    radio.addEventListener("ended", async () => {
+      updatePlayButton(false);
+
+      if (currentMode === "auto" && songs.length > 0) {
+        currentIndex++;
+
+        if (currentIndex >= songs.length) {
+          currentIndex = 0;
+        }
+
+        await playAutomaticSong();
+      } else {
+        showMessage("La transmisión ha terminado.");
+      }
     });
 
     radio.addEventListener("error", () => {
-      play.textContent = "▶";
-      message.textContent = "Error al conectar con la transmisión.";
+      updatePlayButton(false);
+      showMessage("Error al reproducir el audio.");
     });
+
+    radio.addEventListener("pause", () => {
+      if (!radio.ended) {
+        updatePlayButton(false);
+      }
+    });
+
+    radio.addEventListener("playing", () => {
+      updatePlayButton(true);
+    });
+
+    // Cargar biblioteca al entrar en modo automático.
+    // No se inicia audio automáticamente.
   </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js"></script>
+
 </body>
 </html>
