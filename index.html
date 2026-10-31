@@ -347,9 +347,21 @@
           </p>
         </div>
 
-        <div class="station-category">
-          <h3>🧸 INFANTIL</h3>
+<div class="station-category">
+  <h3>🔥 ÉXITOS EN TENDENCIA</h3>
 
+  <button
+    type="button"
+    class="station-button"
+    data-station="los40"
+  >
+    ▶ LOS40 México
+  </button>
+
+  <p class="station-description">
+    Pop latino, éxitos internacionales y canciones del momento.
+  </p>
+</div>
           <a
             class="station-link"
             href="https://radiofmmexico.com/index.php/radio/radio-infantil-com"
@@ -437,16 +449,21 @@
     const LIVE_STREAM_URL = "";
 
     const EXTERNAL_STATIONS = {
-      country: {
-        name: "America's Country",
-        url: "https://ais-sa2.cdnstream1.com/1976_128.mp3"
-      },
+  country: {
+    name: "America's Country",
+    url: "https://ais-sa2.cdnstream1.com/1976_128.mp3"
+  },
 
-      ranchera: {
-        name: "La Rancherita FM 106.3",
-        url: "https://live.zuperdns.net/2063/stream/;stream.mp3"
-      }
-    };
+  ranchera: {
+    name: "La Rancherita FM 106.3",
+    url: "https://live.zuperdns.net/2063/stream/;stream.mp3"
+  },
+
+  los40: {
+    name: "LOS40 México",
+    url: "https://playerservices.streamtheworld.com/api/livestream-redirect/LOS40_MEXICOAAC.aac"
+  }
+};
 
     let currentMode = "live";
     let songs = [];
