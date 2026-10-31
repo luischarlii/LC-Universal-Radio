@@ -336,6 +336,73 @@
       font-size: 12px;
       padding: 25px;
     }
+
+/* LC UNIVERSAL RADIO - LYRICS */
+.lyrics-screen {
+  width: 100%;
+  margin: 18px auto;
+  padding: 16px;
+  min-height: 190px;
+  background: linear-gradient(145deg, #101d32, #080d18);
+  border: 1px solid #b99548;
+  border-radius: 16px;
+  box-shadow: 0 0 18px rgba(185,149,72,.15);
+  color: #fff;
+  overflow: hidden;
+}
+
+.lyrics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(212,175,55,.35);
+  color: #e3c477;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.lyrics-status {
+  font-size: 9px;
+  color: #9ca3af;
+}
+
+.lyrics-content {
+  text-align: center;
+  padding-top: 12px;
+}
+
+.lyrics-content h3 {
+  color: #e3c477;
+  font-size: 19px;
+  margin: 4px 0;
+}
+
+#lyrics-artist {
+  color: #aebbd0;
+  font-size: 12px;
+  margin: 5px 0 14px;
+}
+
+#lyrics-text {
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+#lyrics-text p {
+  margin: 5px 0;
+}
+
+#lyrics-text p.active {
+  color: #f2cf73;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(242,207,115,.35);
+}
+
   </style>
 </head>
 
@@ -344,33 +411,6 @@
   <header>
     <div class="logo">LC UNIVERSAL RADIO</div>
     <p>Tu música, tu estación</p>
-    <!-- Botón Mercado Pago en la cabecera -->
-<div style="text-align:center; margin:15px auto 20px;">
-  <a href="https://mpago.li/1xwA49D"
-     target="_blank"
-     rel="noopener noreferrer"
-     style="display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            gap:10px;
-            background:#ffffff;
-            color:#009EE3;
-            padding:9px 16px;
-            border:2px solid #009EE3;
-            border-radius:10px;
-            text-decoration:none;
-            font-weight:bold;">
-    <img
-      src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/mercado-pago/default.svg"
-      alt="Mercado Pago"
-      width="32"
-      height="32"
-      style="object-fit:contain;">
-    Quiero Donar Con Mercado Pago
-  </a>
-</div>
-
-
   </header>
 
   <main>
@@ -429,7 +469,23 @@
         <p class="station-description">
           Las emisoras giran continuamente. Toca una tarjeta para escucharla.
         </p>
+<section class="lyrics-screen" id="lyrics-screen">
+  <div class="lyrics-header">
+    <span>🎵 LC LYRICS</span>
+    <span class="lyrics-status" id="lyrics-status">ESPERANDO CANCIÓN</span>
+  </div>
 
+  <div class="lyrics-content">
+    <h3 id="lyrics-title">LYRICS</h3>
+    <p id="lyrics-artist">La letra aparecerá aquí</p>
+
+    <div id="lyrics-text">
+      <p>Disfruta tu música favorita.</p>
+      <p>Cuando haya letras disponibles,</p>
+      <p>las mostraremos en esta pantalla.</p>
+    </div>
+  </div>
+</section>
         <div class="stations-track">
           <div class="stations-cylinder">
 
@@ -539,6 +595,28 @@
     const message = document.getElementById("message");
     const stationStatus = document.getElementById("station-status");
     const currentSong = document.getElementById("current-song");
+const lyricsTitle = document.getElementById("lyrics-title");
+const lyricsArtist = document.getElementById("lyrics-artist");
+const lyricsStatus = document.getElementById("lyrics-status");
+const lyricsText = document.getElementById("lyrics-text");
+
+const lyricsObserver = new MutationObserver(() => {
+  const songName = currentSong.textContent.trim();
+
+  lyricsTitle.textContent = songName || "LYRICS";
+  lyricsArtist.textContent = "LC Universal Radio";
+
+  lyricsStatus.textContent =
+    songName && songName !== "Ninguna canción seleccionada."
+      ? "BUSCANDO LETRA"
+      : "ESPERANDO CANCIÓN";
+});
+
+lyricsObserver.observe(currentSong, {
+  childList: true,
+  characterData: true,
+  subtree: true
+});
     const songList = document.getElementById("song-list");
 
     const liveMode = document.getElementById("live-mode");
