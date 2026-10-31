@@ -193,6 +193,63 @@
       cursor: pointer;
     }
 
+    /* ESTACIONES EXTERNAS */
+
+    .stations {
+      margin-top: 25px;
+      text-align: left;
+      background: #101827;
+      border-radius: 14px;
+      padding: 15px;
+    }
+
+    .stations h2 {
+      font-size: 17px;
+      margin-top: 0;
+      color: #fbbf24;
+    }
+
+    .station-category {
+      margin-top: 18px;
+    }
+
+    .station-category h3 {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 9px;
+    }
+
+    .station-button,
+    .station-link {
+      display: block;
+      width: 100%;
+      min-height: 46px;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      background: #1e293b;
+      color: white;
+      font-size: 13px;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .station-button.active {
+      border: 1px solid #fbbf24;
+      border-left: 5px solid #fbbf24;
+      color: #fbbf24;
+      font-weight: bold;
+    }
+
+    .station-description {
+      color: #94a3b8;
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 6px 0;
+    }
+
     #supabase-status {
       color: #94a3b8;
       font-size: 12px;
@@ -265,6 +322,68 @@
         Selecciona una modalidad de reproducción.
       </p>
 
+      <!-- ESTACIONES EXTERNAS -->
+
+      <section class="stations">
+        <h2>📡 Estaciones externas</h2>
+
+        <p class="station-description">
+          Selecciona una emisora para escuchar su transmisión.
+        </p>
+
+        <div class="station-category">
+          <h3>🤠 COUNTRY</h3>
+
+          <button
+            type="button"
+            class="station-button"
+            data-station="country"
+          >
+            ▶ America's Country
+          </button>
+
+          <p class="station-description">
+            Música country clásica y actual en inglés.
+          </p>
+        </div>
+
+        <div class="station-category">
+          <h3>🧸 INFANTIL</h3>
+
+          <a
+            class="station-link"
+            href="https://radiofmmexico.com/index.php/radio/radio-infantil-com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ↗ Escuchar Radio Infantil.com
+          </a>
+
+          <p class="station-description">
+            Música infantil en español. Se abre en una página externa
+            mientras conseguimos una señal directa compatible.
+          </p>
+        </div>
+
+        <div class="station-category">
+          <h3>🇲🇽 RANCHERAS</h3>
+
+          <button
+            type="button"
+            class="station-button"
+            data-station="ranchera"
+          >
+            ▶ La Rancherita FM 106.3
+          </button>
+
+          <p class="station-description">
+            Música ranchera, mariachi y banda.
+          </p>
+        </div>
+      </section>
+
+      <!-- BIBLIOTECA SUPABASE -->
+
       <section class="library">
         <h2>🎵 Biblioteca musical</h2>
 
@@ -311,8 +430,23 @@
     const currentTime = document.getElementById("current-time");
     const durationDisplay = document.getElementById("duration");
 
+    const stationButtons =
+      document.querySelectorAll(".station-button");
+
     const BUCKET = "lc-radio-music";
     const LIVE_STREAM_URL = "";
+
+    const EXTERNAL_STATIONS = {
+      country: {
+        name: "America's Country",
+        url: "https://ais-sa2.cdnstream1.com/1976_128.mp3"
+      },
+
+      ranchera: {
+        name: "La Rancherita FM 106.3",
+        url: "https://live.zuperdns.net/2063/stream/;stream.mp3"
+      }
+    };
 
     let currentMode = "live";
     let songs = [];
@@ -360,8 +494,12 @@
         progress.disabled = true;
         progress.value = 0;
         currentTime.textContent = formatTime(current);
+
         durationDisplay.textContent =
-          radio.src && currentMode === "live" ? "EN VIVO" : "0:00";
+          radio.src &&
+          (currentMode === "live" || currentMode === "station")
+            ? "EN VIVO"
+            : "0:00";
       }
     }
 
@@ -399,6 +537,7 @@
 
     function updatePlayButton(isPlaying) {
       play.textContent = isPlaying ? "Ⅱ" : "▶";
+
       play.setAttribute(
         "aria-label",
         isPlaying ? "Pausar" : "Reproducir"
@@ -413,6 +552,12 @@
       });
     }
 
+    function clearStationHighlight() {
+      stationButtons.forEach(button => {
+        button.classList.remove("active");
+      });
+    }
+
     function stopPlayback() {
       radio.pause();
       radio.removeAttribute("src");
@@ -423,6 +568,8 @@
 
     function changeMode(mode) {
       stopPlayback();
+      clearStationHighlight();
+
       currentMode = mode;
 
       liveMode.classList.toggle("active", mode === "live");
@@ -442,6 +589,72 @@
         loadLibrary();
       }
     }
+
+    async function playExternalStation(stationKey, button) {
+      const station = EXTERNAL_STATIONS[stationKey];
+
+      if (!station) return;
+
+      stopPlayback();
+
+      currentMode = "station";
+
+      liveMode.classList.remove("active");
+      autoMode.classList.remove("active");
+      clearStationHighlight();
+
+      button.classList.add("active");
+
+      currentSong.textContent =
+        "Emisora externa: " + station.name;
+
+      stationStatus.textContent =
+        "● CONECTANDO CON " + station.name.toUpperCase();
+
+      showMessage("Conectando con la emisora...");
+
+      radio.src = station.url;
+      radio.load();
+
+      try {
+        await radio.play();
+
+        stationStatus.textContent =
+          "● EN VIVO: " + station.name.toUpperCase();
+
+        showMessage("Escuchando " + station.name + ".");
+
+        updatePlayButton(true);
+
+      } catch (error) {
+        stationStatus.textContent = "● EMISORA NO DISPONIBLE";
+
+        showMessage(
+          "No se pudo conectar con " +
+          station.name +
+          ". Intenta nuevamente más tarde."
+        );
+
+        updatePlayButton(false);
+        button.classList.remove("active");
+      }
+    }
+
+    stationButtons.forEach(button => {
+      button.addEventListener("click", async () => {
+        const stationKey = button.dataset.station;
+
+        await playExternalStation(stationKey, button);
+      });
+    });
+
+    liveMode.addEventListener("click", () => {
+      changeMode("live");
+    });
+
+    autoMode.addEventListener("click", () => {
+      changeMode("auto");
+    });
 
     async function getAudioFiles(path = "") {
       const { data, error } = await supabaseRadio
@@ -537,6 +750,12 @@
           button.textContent = song.name;
 
           button.addEventListener("click", async () => {
+            clearStationHighlight();
+            currentMode = "auto";
+
+            liveMode.classList.remove("active");
+            autoMode.classList.add("active");
+
             currentIndex = index;
             await playAutomaticSong();
           });
@@ -639,6 +858,19 @@
         return;
       }
 
+      if (currentMode === "station") {
+        if (radio.src) {
+          try {
+            await radio.play();
+            updatePlayButton(true);
+          } catch (error) {
+            showMessage("No se pudo reanudar la emisora.");
+          }
+        }
+
+        return;
+      }
+
       if (radio.paused && radio.src) {
         try {
           await radio.play();
@@ -661,14 +893,6 @@
       }
 
       await startPlayback();
-    });
-
-    liveMode.addEventListener("click", () => {
-      changeMode("live");
-    });
-
-    autoMode.addEventListener("click", () => {
-      changeMode("auto");
     });
 
     refreshLibrary.addEventListener("click", async () => {
