@@ -193,19 +193,15 @@
       cursor: pointer;
     }
 
-    /* ESTACIONES EXTERNAS */
+    /* ESTACIONES EXTERNAS Y CARRUSEL */
 
-.stations {
-  margin-top: 25px;
-  text-align: left;
-  background: #101827;
-  border-radius: 14px;
-  padding: 15px;
-  max-height: 380px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-}
+    .stations {
+      margin-top: 25px;
+      text-align: left;
+      background: #101827;
+      border-radius: 14px;
+      padding: 15px;
+    }
 
     .stations h2 {
       font-size: 17px;
@@ -213,13 +209,34 @@
       color: #fbbf24;
     }
 
+    .stations-track {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 5px 2px 15px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+      scrollbar-color: #fbbf24 #1e293b;
+    }
+
     .station-category {
+      flex: 0 0 82%;
+      min-width: 0;
       margin-top: 18px;
+      padding: 14px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      scroll-snap-align: start;
     }
 
     .station-category h3 {
-      color: #cbd5e1;
+      color: #fbbf24;
       font-size: 14px;
+      margin-top: 0;
       margin-bottom: 9px;
     }
 
@@ -232,7 +249,7 @@
       margin-top: 8px;
       border: 1px solid #334155;
       border-radius: 10px;
-      background: #1e293b;
+      background: #101827;
       color: white;
       font-size: 13px;
       text-align: left;
@@ -332,62 +349,75 @@
         <h2>📡 Estaciones externas</h2>
 
         <p class="station-description">
-          Selecciona una emisora para escuchar su transmisión.
+          Desliza las tarjetas hacia los lados para descubrir las emisoras.
         </p>
 
-        <div class="station-category">
-          <h3>🤠 COUNTRY</h3>
+        <div class="stations-track">
 
-          <button
-            type="button"
-            class="station-button"
-            data-station="country"
-          >
-            ▶ America's Country
-          </button>
+          <div class="station-category">
+            <h3>🤠 COUNTRY</h3>
 
-          <p class="station-description">
-            Música country clásica y actual en inglés.
-          </p>
-        </div>
+            <button
+              type="button"
+              class="station-button"
+              data-station="country"
+            >
+              ▶ America's Country
+            </button>
 
-<div class="station-category">
-  <h3>🔥 ÉXITOS EN TENDENCIA</h3>
-  <button type="button" class="station-button" data-station="onlyhits">
-    ▶ Only Hits – Éxitos actuales
-  </button>
-  <p class="station-description">
-    Pop, dance y éxitos internacionales del momento, sin comerciales según la emisora.
-  </p>
-</div>
-<div class="station-category">
-  <h3>❤️ MÚSICA ROMÁNTICA</h3>
-  <button
-    type="button"
-    class="station-button"
-    data-station="romantica"
-  >
-    ▶ Baladas Románticas Radio
-  </button>
-  <p class="station-description">
-    Baladas románticas en español para dedicar y recordar.
-  </p>
-</div>
+            <p class="station-description">
+              Música country clásica y actual en inglés.
+            </p>
+          </div>
 
-        <div class="station-category">
-          <h3>🇲🇽 RANCHERAS</h3>
+          <div class="station-category">
+            <h3>🔥 ÉXITOS EN TENDENCIA</h3>
 
-          <button
-            type="button"
-            class="station-button"
-            data-station="ranchera"
-          >
-            ▶ La Rancherita FM 106.3
-          </button>
+            <button
+              type="button"
+              class="station-button"
+              data-station="onlyhits"
+            >
+              ▶ Only Hits – Éxitos actuales
+            </button>
 
-          <p class="station-description">
-            Música ranchera, mariachi y banda.
-          </p>
+            <p class="station-description">
+              Pop, dance y éxitos internacionales del momento.
+            </p>
+          </div>
+
+          <div class="station-category">
+            <h3>❤️ MÚSICA ROMÁNTICA</h3>
+
+            <button
+              type="button"
+              class="station-button"
+              data-station="romantica"
+            >
+              ▶ Baladas Románticas Radio
+            </button>
+
+            <p class="station-description">
+              Baladas románticas en español para dedicar y recordar.
+            </p>
+          </div>
+
+          <div class="station-category">
+            <h3>🇲🇽 RANCHERAS</h3>
+
+            <button
+              type="button"
+              class="station-button"
+              data-station="ranchera"
+            >
+              ▶ La Rancherita FM 106.3
+            </button>
+
+            <p class="station-description">
+              Música ranchera, mariachi y banda.
+            </p>
+          </div>
+
         </div>
       </section>
 
@@ -446,25 +476,27 @@
     const LIVE_STREAM_URL = "";
 
     const EXTERNAL_STATIONS = {
-  country: {
-    name: "America's Country",
-    url: "https://ais-sa2.cdnstream1.com/1976_128.mp3"
-  },
+      country: {
+        name: "America's Country",
+        url: "https://ais-sa2.cdnstream1.com/1976_128.mp3"
+      },
 
-  ranchera: {
-    name: "La Rancherita FM 106.3",
-    url: "https://live.zuperdns.net/2063/stream/;stream.mp3"
-  },
+      ranchera: {
+        name: "La Rancherita FM 106.3",
+        url: "https://live.zuperdns.net/2063/stream/;stream.mp3"
+      },
 
-  onlyhits: {
-  name: "Only Hits – Éxitos actuales",
-  url: "https://cdn.onlyhitsradio.net/onlyhits"
-},
-romantica: {
-  name: "Baladas Románticas Radio",
-  url: "https://media.streamingradiomx.com/listen/baladas_rom%C3%A1nticas_radio/radio.mp3"
-}
-};
+      onlyhits: {
+        name: "Only Hits – Éxitos actuales",
+        url: "https://cdn.onlyhitsradio.net/onlyhits"
+      },
+
+      romantica: {
+        name: "Baladas Románticas Radio",
+        url: "https://media.streamingradiomx.com/listen/baladas_rom%C3%A1nticas_radio/radio.mp3"
+      }
+    };
+
     let currentMode = "live";
     let songs = [];
     let currentIndex = 0;
