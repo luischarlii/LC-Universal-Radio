@@ -8,9 +8,7 @@
   <title>LC Universal Radio</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -69,9 +67,7 @@
       margin: 12px 0;
     }
 
-    .subtitle {
-      color: #cbd5e1;
-    }
+    .subtitle { color: #cbd5e1; }
 
     .mode-selector {
       display: flex;
@@ -89,6 +85,8 @@
       background: #334155;
       color: white;
       font-size: 13px;
+      border: none;
+      cursor: pointer;
     }
 
     .mode.active {
@@ -141,14 +139,31 @@
     }
 
     #song-list {
-      padding-left: 20px;
+      list-style: none;
+      padding: 0;
       color: #cbd5e1;
       font-size: 13px;
     }
 
-    #song-list li {
-      margin: 10px 0;
+    #song-list li { margin: 8px 0; }
+
+    .song-item {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #334155;
+      border-radius: 9px;
+      background: #1e293b;
+      color: #cbd5e1;
+      text-align: left;
+      font-size: 13px;
       overflow-wrap: anywhere;
+      cursor: pointer;
+    }
+
+    .song-item.active {
+      background: #854d0e;
+      border-color: #fbbf24;
+      color: white;
     }
 
     .secondary-button {
@@ -160,6 +175,8 @@
       margin-top: 12px;
       background: #334155;
       color: white;
+      border: none;
+      cursor: pointer;
     }
 
     #supabase-status {
@@ -193,9 +210,7 @@
 
       <h1>LC Universal Radio</h1>
 
-      <div class="subtitle">
-        Música para todos
-      </div>
+      <div class="subtitle">Música para todos</div>
 
       <div class="mode-selector">
         <button id="live-mode" class="mode active">
@@ -241,10 +256,7 @@
           <li>La biblioteca todavía no se ha cargado.</li>
         </ol>
 
-        <button
-          id="refresh-library"
-          class="secondary-button"
-        >
+        <button id="refresh-library" class="secondary-button">
           Actualizar biblioteca
         </button>
       </section>
@@ -277,9 +289,6 @@
     const refreshLibrary = document.getElementById("refresh-library");
 
     const BUCKET = "lc-radio-music";
-
-    // Agregaremos aquí la URL de la estación en vivo
-    // cuando tengas una dirección de transmisión.
     const LIVE_STREAM_URL = "";
 
     let currentMode = "live";
@@ -301,6 +310,14 @@
       );
     }
 
+    function updateSongHighlight() {
+      const buttons = songList.querySelectorAll(".song-item");
+
+      buttons.forEach((button, index) => {
+        button.classList.toggle("active", index === currentIndex);
+      });
+    }
+
     function stopPlayback() {
       radio.pause();
       radio.removeAttribute("src");
@@ -310,7 +327,6 @@
 
     function changeMode(mode) {
       stopPlayback();
-
       currentMode = mode;
 
       liveMode.classList.toggle("active", mode === "live");
@@ -342,9 +358,7 @@
           }
         });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       let files = [];
 
@@ -390,11 +404,13 @@
       songList.innerHTML = "<li>Cargando biblioteca...</li>";
 
       try {
+        const previousPath = songs[currentIndex]?.path;
         songs = await getAudioFiles();
 
         songList.innerHTML = "";
 
         if (songs.length === 0) {
+          currentIndex = 0;
           songList.innerHTML =
             "<li>No hay canciones disponibles.</li>";
 
@@ -408,13 +424,30 @@
           return;
         }
 
+        const preservedIndex = songs.findIndex(
+          song => song.path === previousPath
+        );
+
+        currentIndex = preservedIndex >= 0 ? preservedIndex : 0;
+
         songs.forEach((song, index) => {
           const li = document.createElement("li");
-          li.textContent = song.name;
+          const button = document.createElement("button");
+
+          button.type = "button";
+          button.className = "song-item";
+          button.textContent = song.name;
+
+          button.addEventListener("click", async () => {
+            currentIndex = index;
+            await playAutomaticSong();
+          });
+
+          li.appendChild(button);
           songList.appendChild(li);
         });
 
-        currentIndex = 0;
+        updateSongHighlight();
 
         showMessage(
           "Biblioteca cargada. Canciones encontradas: " +
@@ -456,9 +489,7 @@
           .from(BUCKET)
           .createSignedUrl(song.path, 3600);
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
         radio.src = data.signedUrl;
         radio.load();
@@ -470,10 +501,13 @@
 
         stationStatus.textContent = "● REPRODUCIENDO MÚSICA";
 
-        showMessage("Reproduciendo canción " +
-          (currentIndex + 1) + " de " + songs.length);
+        showMessage(
+          "Reproduciendo canción " +
+          (currentIndex + 1) + " de " + songs.length
+        );
 
         updatePlayButton(true);
+        updateSongHighlight();
 
       } catch (error) {
         showMessage("Error al reproducir: " + error.message);
@@ -576,8 +610,6 @@
       updatePlayButton(true);
     });
 
-    // Cargar biblioteca al entrar en modo automático.
-    // No se inicia audio automáticamente.
   </script>
 
 </body>
