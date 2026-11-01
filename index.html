@@ -947,7 +947,12 @@ let synchronizedLyrics = [];
 
 async function loadLyricsForTitle(fileName) {
   const requestId = ++lyricsRequestId;
-  const title = fileName.replace(/\.[^.]+$/, "").trim();
+  const title = fileName
+  .replace(/^\d+-\d+-/, "")
+  .replace(/\.[^.]+$/, "")
+  .replace(/_mp3$/i, "")
+  .replace(/_/g, " ")
+  .trim();
 
   lyricsTitle.textContent = title;
   lyricsArtist.textContent = "Buscando información...";
