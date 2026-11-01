@@ -929,9 +929,9 @@ function normalizeLyricsTitle(value) {
 let lyricsRequestId = 0;
 let synchronizedLyrics = [];
 
+
 async function loadLyricsForTitle(fileName) {
   const requestId = ++lyricsRequestId;
-
   const title = fileName.replace(/\.[^.]+$/, "").trim();
 
   lyricsTitle.textContent = title;
@@ -941,19 +941,21 @@ async function loadLyricsForTitle(fileName) {
 
   synchronizedLyrics = [];
 
+  const controller = new AbortController();
+
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, 10000);
+
   try {
     const url =
       "https://lrclib.net/api/search?q=" +
       encodeURIComponent(title);
-const controller = new AbortController();
 
-const timeoutId = setTimeout(() => {
-  controller.abort();
-}, 10000);
     const response = await fetch(url, {
-  signal: controller.signal
-});
-clearTimeout(timeoutId);
+      signal: controller.signal
+    });
+
     if (!response.ok) {
       throw new Error("Servicio de letras no disponible");
     }
@@ -980,7 +982,8 @@ clearTimeout(timeoutId);
     }
 
     lyricsTitle.textContent = match.trackName;
-    lyricsArtist.textContent = match.artistName || "Artista desconocido";
+    lyricsArtist.textContent =
+      match.artistName || "Artista desconocido";
 
     if (match.syncedLyrics) {
       synchronizedLyrics = match.syncedLyrics
@@ -1007,15 +1010,18 @@ clearTimeout(timeoutId);
     }
 
   } catch (error) {
-clearTimeout(timeoutId);
     if (requestId !== lyricsRequestId) return;
 
     lyricsStatus.textContent =
-  error.name === "AbortError"
-    ? "TIEMPO AGOTADO"
-    : "ERROR DE BÚSQUEDA";
+      error.name === "AbortError"
+        ? "TIEMPO AGOTADO"
+        : "ERROR DE BÚSQUEDA";
+
     lyricsText.textContent =
       "No fue posible consultar las letras. Intenta más tarde.";
+
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
