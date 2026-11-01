@@ -627,7 +627,15 @@ const lyricsText = document.getElementById("lyrics-text");
 
 const lyricsObserver = new MutationObserver(() => {
   const songName = currentSong.textContent.trim();
-
+  if (songName.startsWith("Emisora externa:")) {
+    lyricsTitle.textContent = "LYRICS";
+    lyricsArtist.textContent =
+      songName.replace("Emisora externa:", "").trim();
+    lyricsStatus.textContent = "ESPERANDO CANCIÓN";
+    lyricsText.textContent =
+      "Esperando información de la canción transmitida...";
+    return;
+  }
   lyricsTitle.textContent = songName || "LYRICS";
   lyricsArtist.textContent = "LC Universal Radio";
 
@@ -867,7 +875,14 @@ lyricsObserver.observe(currentSong, {
 
       currentSong.textContent =
         "Emisora externa: " + station.name;
+lyricsRequestId++;
+synchronizedLyrics = [];
 
+lyricsTitle.textContent = "LYRICS";
+lyricsArtist.textContent = station.name;
+lyricsStatus.textContent = "ESPERANDO CANCIÓN";
+lyricsText.textContent =
+  "Esperando información de la canción transmitida...";
       stationStatus.textContent =
         "● CONECTANDO CON " + station.name.toUpperCase();
 
