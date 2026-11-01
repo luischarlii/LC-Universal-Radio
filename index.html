@@ -915,7 +915,127 @@ lyricsObserver.observe(currentSong, {
     autoMode.addEventListener("click", () => {
       changeMode("auto");
     });
+function normalizeLyricsTitle(value) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\.[^.]+$/, "")
+    .replace(/[^\w\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
+let lyricsRequestId = 0;
+let synchronizedLyrics = [];
+
+async function loadLyricsForTitle(fileName) {
+  const requestId = ++lyricsRequestId;
+
+  const title = fileName.replace(/\.[^.]+$/, "").trim();
+
+  lyricsTitle.textContent = title;
+  lyricsArtist.textContent = "Buscando información...";
+  lyricsStatus.textContent = "BUSCANDO LETRA";
+  lyricsText.textContent = "Consultando biblioteca de letras...";
+
+  synchronizedLyrics = [];
+
+  try {
+    const url =
+      "https://lrclib.net/api/search?q=" +
+      encodeURIComponent(title);
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("Servicio de letras no disponible");
+    }
+
+    const results = await response.json();
+
+    if (requestId !== lyricsRequestId) return;
+
+    const matches = results.filter(song =>
+      normalizeLyricsTitle(song.trackName) ===
+      normalizeLyricsTitle(title)
+    );
+
+    const match = matches.find(song =>
+      song.syncedLyrics || song.plainLyrics
+    );
+
+    if (!match) {
+      lyricsArtist.textContent = "Artista no identificado";
+      lyricsStatus.textContent = "LETRA NO ENCONTRADA";
+      lyricsText.textContent =
+        "No encontramos una letra para este título.";
+      return;
+    }
+
+    lyricsTitle.textContent = match.trackName;
+    lyricsArtist.textContent = match.artistName || "Artista desconocido";
+
+    if (match.syncedLyrics) {
+      synchronizedLyrics = match.syncedLyrics
+        .split("\n")
+        .map(line => {
+          const found = line.match(
+            /^\[(\d{2}):(\d{2}(?:\.\d+)?)\]\s*(.*)$/
+          );
+
+          if (!found) return null;
+
+          return {
+            time: Number(found[1]) * 60 + Number(found[2]),
+            text: found[3]
+          };
+        })
+        .filter(line => line && line.text);
+
+      lyricsStatus.textContent = "LETRA SINCRONIZADA";
+      renderSynchronizedLyrics();
+    } else {
+      lyricsStatus.textContent = "LETRA DISPONIBLE";
+      lyricsText.textContent = match.plainLyrics || "";
+    }
+
+  } catch (error) {
+    if (requestId !== lyricsRequestId) return;
+
+    lyricsStatus.textContent = "ERROR DE BÚSQUEDA";
+    lyricsText.textContent =
+      "No fue posible consultar las letras. Intenta más tarde.";
+  }
+}
+
+function renderSynchronizedLyrics() {
+  lyricsText.innerHTML = "";
+
+  synchronizedLyrics.forEach(line => {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = line.text;
+    paragraph.dataset.time = line.time;
+    lyricsText.appendChild(paragraph);
+  });
+}
+
+radio.addEventListener("timeupdate", () => {
+  if (synchronizedLyrics.length === 0) return;
+
+  const current = radio.currentTime;
+  let activeIndex = -1;
+
+  synchronizedLyrics.forEach((line, index) => {
+    if (line.time <= current) activeIndex = index;
+  });
+
+  const paragraphs = lyricsText.querySelectorAll("p");
+
+  paragraphs.forEach((paragraph, index) => {
+    paragraph.classList.toggle("active", index === activeIndex);
+  });
+});
     async function getAudioFiles(path = "") {
       const { data, error } = await supabaseRadio
         .storage
@@ -1077,7 +1197,7 @@ lyricsObserver.observe(currentSong, {
 
         currentSong.textContent =
           "Reproduciendo: " + song.name;
-
+loadLyricsForTitle(song.name);
         stationStatus.textContent = "● REPRODUCIENDO MÚSICA";
 
         showMessage(
