@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -323,7 +324,7 @@
       margin: 6px 0;
     }
 
-    /* EMISORAS PENDIENTES */
+    /* EMISORAS PENDIENTES DE AUTORIZACIÓN */
 
     .pending-stations {
       margin-top: 20px;
@@ -450,12 +451,14 @@
     }
   </style>
 </head>
+
 <body>
 
   <header>
     <div class="logo">LC UNIVERSAL RADIO</div>
     <p>Tu música, tu estación</p>
 
+    <!-- Botón Mercado Pago en la cabecera -->
     <div style="text-align:center; margin:15px auto 20px;">
       <a href="https://mpago.li/1xwA49D"
          target="_blank"
@@ -625,47 +628,43 @@
                 Música ranchera, mariachi y banda.
               </p>
             </div>
+            <div class="station-category">
+              <h3>🎓 RADIO UNIVERSITARIA</h3>
 
+              <button
+                type="button"
+                class="station-button"
+                disabled
+                aria-disabled="true"
+              >
+                📡 Radio Universidad UACH — 105.3 FM
+              </button>
+
+              <p class="station-description">
+                Chihuahua · Transmisión pendiente de verificación.
+              </p>
+            </div>
+
+            <div class="station-category">
+              <h3>🇲🇽 MÚSICA GRUPERA</h3>
+
+              <button
+                type="button"
+                class="station-button"
+                disabled
+                aria-disabled="true"
+              >
+                📡 La Ke Buena — 97.7 FM
+              </button>
+
+              <p class="station-description">
+                Ojinaga · Transmisión pendiente de verificación.
+              </p>
+            </div>
           </div>
         </div>
 
-        <!-- NUEVAS EMISORAS -->
-
-        <section class="pending-stations">
-          <h3>📻 Emisoras de Chihuahua</h3>
-
-          <p class="station-description">
-            Nuevas emisoras incorporadas al catálogo de LC Universal Radio.
-            La conexión directa de audio está pendiente de verificación.
-          </p>
-
-          <button
-            type="button"
-            class="pending-station"
-            disabled
-            aria-disabled="true"
-          >
-            📡 Radio Universidad UACH — 105.3 FM
-            <span class="pending-label">
-              Chihuahua · Audio pendiente de conexión
-            </span>
-          </button>
-
-          <button
-            type="button"
-            class="pending-station"
-            disabled
-            aria-disabled="true"
-          >
-            📡 La Ke Buena — 97.7 FM
-            <span class="pending-label">
-              Ojinaga · Audio pendiente de conexión
-            </span>
-          </button>
-        </section>
-
-      </section>
-
+        
       <!-- BIBLIOTECA SUPABASE -->
 
       <section class="library">
@@ -697,6 +696,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./app.js"></script>
+
   <script>
     const radio = document.getElementById("radio");
     const play = document.getElementById("play");
@@ -762,6 +762,8 @@
     let lyricsRequestId = 0;
     let synchronizedLyrics = [];
 
+    /* LIMPIEZA DE NOMBRES DE ARCHIVOS */
+
     function cleanSongTitle(fileName) {
       return String(fileName || "")
         .replace(/^\d+-\d+-/, "")
@@ -781,6 +783,8 @@
         .replace(/\s+/g, " ")
         .trim();
     }
+
+    /* OBSERVADOR DE LA PANTALLA LYRICS */
 
     const lyricsObserver = new MutationObserver(() => {
       const songName = currentSong.textContent.trim();
@@ -824,6 +828,8 @@
       characterData: true,
       subtree: true
     });
+
+    /* AJUSTE AUTOMÁTICO DEL CILINDRO */
 
     function layoutStationCylinder() {
       if (!stationCards.length || !stationsTrack) return;
@@ -1047,6 +1053,8 @@
       changeMode("auto");
     });
 
+    /* BÚSQUEDA DE LETRAS */
+
     async function loadLyricsForTitle(fileName) {
       const requestId = ++lyricsRequestId;
       const title = cleanSongTitle(fileName);
@@ -1171,6 +1179,8 @@
       });
     });
 
+    /* BIBLIOTECA SUPABASE */
+
     async function getAudioFiles(path = "") {
       const { data, error } = await supabaseRadio
         .storage
@@ -1263,6 +1273,8 @@
 
           button.type = "button";
           button.className = "song-item";
+
+          // Se muestra el título limpio, pero se conserva song.path.
           button.textContent = cleanSongTitle(song.name);
 
           button.addEventListener("click", async () => {
@@ -1352,6 +1364,8 @@
         updatePlayButton(false);
       }
     }
+
+    /* CONTROLES DE REPRODUCCIÓN */
 
     async function startPlayback() {
       if (currentMode === "live") {
