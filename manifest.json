@@ -1,0 +1,21 @@
+
+{
+  "id": "./",
+  "name": "LC Universal Radio",
+  "short_name": "Lc Radio",
+  "description": "Escucha musica para todos gustos",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "./radio.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
