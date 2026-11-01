@@ -337,72 +337,72 @@
       padding: 25px;
     }
 
-/* LC UNIVERSAL RADIO - LYRICS */
-.lyrics-screen {
-  width: 100%;
-  margin: 18px auto;
-  padding: 16px;
-  min-height: 190px;
-  background: linear-gradient(145deg, #101d32, #080d18);
-  border: 1px solid #b99548;
-  border-radius: 16px;
-  box-shadow: 0 0 18px rgba(185,149,72,.15);
-  color: #fff;
-  overflow: hidden;
-}
+    /* LC UNIVERSAL RADIO - LYRICS */
 
-.lyrics-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(212,175,55,.35);
-  color: #e3c477;
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
+    .lyrics-screen {
+      width: 100%;
+      margin: 18px auto;
+      padding: 16px;
+      min-height: 190px;
+      background: linear-gradient(145deg, #101d32, #080d18);
+      border: 1px solid #b99548;
+      border-radius: 16px;
+      box-shadow: 0 0 18px rgba(185,149,72,.15);
+      color: #fff;
+      overflow: hidden;
+    }
 
-.lyrics-status {
-  font-size: 9px;
-  color: #9ca3af;
-}
+    .lyrics-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(212,175,55,.35);
+      color: #e3c477;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
 
-.lyrics-content {
-  text-align: center;
-  padding-top: 12px;
-}
+    .lyrics-status {
+      font-size: 9px;
+      color: #9ca3af;
+    }
 
-.lyrics-content h3 {
-  color: #e3c477;
-  font-size: 19px;
-  margin: 4px 0;
-}
+    .lyrics-content {
+      text-align: center;
+      padding-top: 12px;
+    }
 
-#lyrics-artist {
-  color: #aebbd0;
-  font-size: 12px;
-  margin: 5px 0 14px;
-}
+    .lyrics-content h3 {
+      color: #e3c477;
+      font-size: 19px;
+      margin: 4px 0;
+    }
 
-#lyrics-text {
-  color: #fff;
-  font-size: 15px;
-  line-height: 1.7;
-  font-weight: 500;
-}
+    #lyrics-artist {
+      color: #aebbd0;
+      font-size: 12px;
+      margin: 5px 0 14px;
+    }
 
-#lyrics-text p {
-  margin: 5px 0;
-}
+    #lyrics-text {
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.7;
+      font-weight: 500;
+    }
 
-#lyrics-text p.active {
-  color: #f2cf73;
-  font-weight: bold;
-  text-shadow: 0 0 10px rgba(242,207,115,.35);
-}
+    #lyrics-text p {
+      margin: 5px 0;
+    }
 
+    #lyrics-text p.active {
+      color: #f2cf73;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(242,207,115,.35);
+    }
   </style>
 </head>
 
@@ -411,31 +411,6 @@
   <header>
     <div class="logo">LC UNIVERSAL RADIO</div>
     <p>Tu música, tu estación</p>
- <!-- Botón Mercado Pago en la cabecera -->
-<div style="text-align:center; margin:15px auto 20px;">
-  <a href="https://mpago.li/1xwA49D"
-     target="_blank"
-     rel="noopener noreferrer"
-     style="display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            gap:10px;
-            background:#ffffff;
-            color:#009EE3;
-            padding:9px 16px;
-            border:2px solid #009EE3;
-            border-radius:10px;
-            text-decoration:none;
-            font-weight:bold;">
-    <img
-      src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/mercado-pago/default.svg"
-      alt="Mercado Pago"
-      width="32"
-      height="32"
-      style="object-fit:contain;">
-    Apoya Al Proyecto
-  </a>
-</div>   
   </header>
 
   <main>
@@ -494,23 +469,27 @@
         <p class="station-description">
           Las emisoras giran continuamente. Toca una tarjeta para escucharla.
         </p>
-<section class="lyrics-screen" id="lyrics-screen">
-  <div class="lyrics-header">
-    <span>🎵 LC LYRICS</span>
-    <span class="lyrics-status" id="lyrics-status">ESPERANDO CANCIÓN</span>
-  </div>
 
-  <div class="lyrics-content">
-    <h3 id="lyrics-title">LYRICS</h3>
-    <p id="lyrics-artist">La letra aparecerá aquí</p>
+        <!-- PANTALLA LYRICS -->
 
-    <div id="lyrics-text">
-      <p>Disfruta tu música favorita.</p>
-      <p>Cuando haya letras disponibles,</p>
-      <p>las mostraremos en esta pantalla.</p>
-    </div>
-  </div>
-</section>
+        <section class="lyrics-screen" id="lyrics-screen">
+          <div class="lyrics-header">
+            <span>🎵 LC LYRICS</span>
+            <span class="lyrics-status" id="lyrics-status">ESPERANDO CANCIÓN</span>
+          </div>
+
+          <div class="lyrics-content">
+            <h3 id="lyrics-title">LYRICS</h3>
+            <p id="lyrics-artist">La letra aparecerá aquí</p>
+
+            <div id="lyrics-text">
+              <p>Disfruta tu música favorita.</p>
+              <p>Cuando haya letras disponibles,</p>
+              <p>las mostraremos en esta pantalla.</p>
+            </div>
+          </div>
+        </section>
+
         <div class="stations-track">
           <div class="stations-cylinder">
 
@@ -620,36 +599,12 @@
     const message = document.getElementById("message");
     const stationStatus = document.getElementById("station-status");
     const currentSong = document.getElementById("current-song");
-const lyricsTitle = document.getElementById("lyrics-title");
-const lyricsArtist = document.getElementById("lyrics-artist");
-const lyricsStatus = document.getElementById("lyrics-status");
-const lyricsText = document.getElementById("lyrics-text");
 
-const lyricsObserver = new MutationObserver(() => {
-  const songName = currentSong.textContent.trim();
-  if (songName.startsWith("Emisora externa:")) {
-    lyricsTitle.textContent = "LYRICS";
-    lyricsArtist.textContent =
-      songName.replace("Emisora externa:", "").trim();
-    lyricsStatus.textContent = "ESPERANDO CANCIÓN";
-    lyricsText.textContent =
-      "Esperando información de la canción transmitida...";
-    return;
-  }
-  lyricsTitle.textContent = songName || "LYRICS";
-  lyricsArtist.textContent = "LC Universal Radio";
+    const lyricsTitle = document.getElementById("lyrics-title");
+    const lyricsArtist = document.getElementById("lyrics-artist");
+    const lyricsStatus = document.getElementById("lyrics-status");
+    const lyricsText = document.getElementById("lyrics-text");
 
-  lyricsStatus.textContent =
-    songName && songName !== "Ninguna canción seleccionada."
-      ? "BUSCANDO LETRA"
-      : "ESPERANDO CANCIÓN";
-});
-
-lyricsObserver.observe(currentSong, {
-  childList: true,
-  characterData: true,
-  subtree: true
-});
     const songList = document.getElementById("song-list");
 
     const liveMode = document.getElementById("live-mode");
@@ -663,33 +618,11 @@ lyricsObserver.observe(currentSong, {
     const stationButtons =
       document.querySelectorAll(".station-button");
 
-    /* AJUSTE AUTOMÁTICO DEL CILINDRO */
-
     const stationCards =
       document.querySelectorAll(".station-category");
 
     const stationsTrack =
       document.querySelector(".stations-track");
-
-    function layoutStationCylinder() {
-      if (!stationCards.length || !stationsTrack) return;
-
-      const cardWidth = stationCards[0].getBoundingClientRect().width;
-
-      const radius = cardWidth / 2;
-
-      stationsTrack.style.setProperty(
-        "--radius",
-        radius + "px"
-      );
-    }
-
-    requestAnimationFrame(layoutStationCylinder);
-
-    window.addEventListener(
-      "resize",
-      layoutStationCylinder
-    );
 
     const BUCKET = "lc-radio-music";
     const LIVE_STREAM_URL = "";
@@ -721,6 +654,96 @@ lyricsObserver.observe(currentSong, {
     let currentIndex = 0;
     let loading = false;
     let isSeeking = false;
+
+    let lyricsRequestId = 0;
+    let synchronizedLyrics = [];
+
+    /* LIMPIEZA DE NOMBRES DE ARCHIVOS */
+
+    function cleanSongTitle(fileName) {
+      return String(fileName || "")
+        .replace(/^\d+-\d+-/, "")
+        .replace(/\.(mp3|m4a|aac|ogg|wav|flac)$/i, "")
+        .replace(/_(mp3|m4a|aac|ogg|wav|flac)$/i, "")
+        .replace(/_/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function normalizeLyricsTitle(value) {
+      return cleanSongTitle(value)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^\w\s]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    /* OBSERVADOR DE LA PANTALLA LYRICS */
+
+    const lyricsObserver = new MutationObserver(() => {
+      const songName = currentSong.textContent.trim();
+
+      if (songName.startsWith("Emisora externa:")) {
+        lyricsTitle.textContent = "LYRICS";
+
+        lyricsArtist.textContent =
+          songName.replace("Emisora externa:", "").trim();
+
+        lyricsStatus.textContent = "ESPERANDO CANCIÓN";
+
+        lyricsText.textContent =
+          "Esperando información de la canción transmitida...";
+
+        return;
+      }
+
+      if (
+        !songName ||
+        songName === "Ninguna canción seleccionada."
+      ) {
+        lyricsTitle.textContent = "LYRICS";
+        lyricsArtist.textContent = "La letra aparecerá aquí";
+        lyricsStatus.textContent = "ESPERANDO CANCIÓN";
+        return;
+      }
+
+      const cleanName = songName.replace(
+        /^Reproduciendo:\s*/i,
+        ""
+      );
+
+      lyricsTitle.textContent = cleanSongTitle(cleanName);
+      lyricsArtist.textContent = "LC Universal Radio";
+      lyricsStatus.textContent = "BUSCANDO LETRA";
+    });
+
+    lyricsObserver.observe(currentSong, {
+      childList: true,
+      characterData: true,
+      subtree: true
+    });
+
+    /* AJUSTE AUTOMÁTICO DEL CILINDRO */
+
+    function layoutStationCylinder() {
+      if (!stationCards.length || !stationsTrack) return;
+
+      const cardWidth =
+        stationCards[0].getBoundingClientRect().width;
+
+      const radius = cardWidth / 2;
+
+      stationsTrack.style.setProperty(
+        "--radius",
+        radius + "px"
+      );
+    }
+
+    requestAnimationFrame(layoutStationCylinder);
+
+    window.addEventListener("resize", layoutStationCylinder);
 
     function showMessage(text) {
       message.textContent = text;
@@ -865,6 +888,9 @@ lyricsObserver.observe(currentSong, {
 
       stopPlayback();
 
+      lyricsRequestId++;
+      synchronizedLyrics = [];
+
       currentMode = "station";
 
       liveMode.classList.remove("active");
@@ -875,14 +901,7 @@ lyricsObserver.observe(currentSong, {
 
       currentSong.textContent =
         "Emisora externa: " + station.name;
-lyricsRequestId++;
-synchronizedLyrics = [];
 
-lyricsTitle.textContent = "LYRICS";
-lyricsArtist.textContent = station.name;
-lyricsStatus.textContent = "ESPERANDO CANCIÓN";
-lyricsText.textContent =
-  "Esperando información de la canción transmitida...";
       stationStatus.textContent =
         "● CONECTANDO CON " + station.name.toUpperCase();
 
@@ -918,7 +937,6 @@ lyricsText.textContent =
     stationButtons.forEach(button => {
       button.addEventListener("click", async () => {
         const stationKey = button.dataset.station;
-
         await playExternalStation(stationKey, button);
       });
     });
@@ -930,148 +948,135 @@ lyricsText.textContent =
     autoMode.addEventListener("click", () => {
       changeMode("auto");
     });
-function normalizeLyricsTitle(value) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/\.[^.]+$/, "")
-    .replace(/[^\w\s]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
 
-let lyricsRequestId = 0;
-let synchronizedLyrics = [];
+    /* BÚSQUEDA DE LETRAS */
 
+    async function loadLyricsForTitle(fileName) {
+      const requestId = ++lyricsRequestId;
+      const title = cleanSongTitle(fileName);
 
-async function loadLyricsForTitle(fileName) {
-  const requestId = ++lyricsRequestId;
-  const title = fileName
-  .replace(/^\d+-\d+-/, "")
-  .replace(/\.[^.]+$/, "")
-  .replace(/_mp3$/i, "")
-  .replace(/_/g, " ")
-  .trim();
+      lyricsTitle.textContent = title;
+      lyricsArtist.textContent = "Buscando información...";
+      lyricsStatus.textContent = "BUSCANDO LETRA";
+      lyricsText.textContent = "Consultando biblioteca de letras...";
 
-  lyricsTitle.textContent = title;
-  lyricsArtist.textContent = "Buscando información...";
-  lyricsStatus.textContent = "BUSCANDO LETRA";
-  lyricsText.textContent = "Consultando biblioteca de letras...";
+      synchronizedLyrics = [];
 
-  synchronizedLyrics = [];
+      const controller = new AbortController();
 
-  const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+      }, 10000);
 
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, 10000);
+      try {
+        const url =
+          "https://lrclib.net/api/search?q=" +
+          encodeURIComponent(title);
 
-  try {
-    const url =
-      "https://lrclib.net/api/search?q=" +
-      encodeURIComponent(title);
+        const response = await fetch(url, {
+          signal: controller.signal
+        });
 
-    const response = await fetch(url, {
-      signal: controller.signal
+        if (!response.ok) {
+          throw new Error("Servicio de letras no disponible");
+        }
+
+        const results = await response.json();
+
+        if (requestId !== lyricsRequestId) return;
+
+        const matches = results.filter(song =>
+          normalizeLyricsTitle(song.trackName) ===
+          normalizeLyricsTitle(title)
+        );
+
+        const match = matches.find(song =>
+          song.syncedLyrics || song.plainLyrics
+        );
+
+        if (!match) {
+          lyricsArtist.textContent = "Artista no identificado";
+          lyricsStatus.textContent = "LETRA NO ENCONTRADA";
+          lyricsText.textContent =
+            "No encontramos una letra para este título.";
+          return;
+        }
+
+        lyricsTitle.textContent = match.trackName;
+        lyricsArtist.textContent =
+          match.artistName || "Artista desconocido";
+
+        if (match.syncedLyrics) {
+          synchronizedLyrics = match.syncedLyrics
+            .split("\n")
+            .map(line => {
+              const found = line.match(
+                /^\[(\d{2}):(\d{2}(?:\.\d+)?)\]\s*(.*)$/
+              );
+
+              if (!found) return null;
+
+              return {
+                time: Number(found[1]) * 60 + Number(found[2]),
+                text: found[3]
+              };
+            })
+            .filter(line => line && line.text);
+
+          lyricsStatus.textContent = "LETRA SINCRONIZADA";
+          renderSynchronizedLyrics();
+
+        } else {
+          lyricsStatus.textContent = "LETRA DISPONIBLE";
+          lyricsText.textContent = match.plainLyrics || "";
+        }
+
+      } catch (error) {
+        if (requestId !== lyricsRequestId) return;
+
+        lyricsStatus.textContent =
+          error.name === "AbortError"
+            ? "TIEMPO AGOTADO"
+            : "ERROR DE BÚSQUEDA";
+
+        lyricsText.textContent =
+          "No fue posible consultar las letras. Intenta más tarde.";
+
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
+    function renderSynchronizedLyrics() {
+      lyricsText.innerHTML = "";
+
+      synchronizedLyrics.forEach(line => {
+        const paragraph = document.createElement("p");
+        paragraph.textContent = line.text;
+        paragraph.dataset.time = line.time;
+        lyricsText.appendChild(paragraph);
+      });
+    }
+
+    radio.addEventListener("timeupdate", () => {
+      if (synchronizedLyrics.length === 0) return;
+
+      const current = radio.currentTime;
+      let activeIndex = -1;
+
+      synchronizedLyrics.forEach((line, index) => {
+        if (line.time <= current) activeIndex = index;
+      });
+
+      const paragraphs = lyricsText.querySelectorAll("p");
+
+      paragraphs.forEach((paragraph, index) => {
+        paragraph.classList.toggle("active", index === activeIndex);
+      });
     });
 
-    if (!response.ok) {
-      throw new Error("Servicio de letras no disponible");
-    }
+    /* BIBLIOTECA SUPABASE */
 
-    const results = await response.json();
-
-    if (requestId !== lyricsRequestId) return;
-
-    const matches = results.filter(song =>
-      normalizeLyricsTitle(song.trackName) ===
-      normalizeLyricsTitle(title)
-    );
-
-    const match = matches.find(song =>
-      song.syncedLyrics || song.plainLyrics
-    );
-
-    if (!match) {
-      lyricsArtist.textContent = "Artista no identificado";
-      lyricsStatus.textContent = "LETRA NO ENCONTRADA";
-      lyricsText.textContent =
-        "No encontramos una letra para este título.";
-      return;
-    }
-
-    lyricsTitle.textContent = match.trackName;
-    lyricsArtist.textContent =
-      match.artistName || "Artista desconocido";
-
-    if (match.syncedLyrics) {
-      synchronizedLyrics = match.syncedLyrics
-        .split("\n")
-        .map(line => {
-          const found = line.match(
-            /^\[(\d{2}):(\d{2}(?:\.\d+)?)\]\s*(.*)$/
-          );
-
-          if (!found) return null;
-
-          return {
-            time: Number(found[1]) * 60 + Number(found[2]),
-            text: found[3]
-          };
-        })
-        .filter(line => line && line.text);
-
-      lyricsStatus.textContent = "LETRA SINCRONIZADA";
-      renderSynchronizedLyrics();
-    } else {
-      lyricsStatus.textContent = "LETRA DISPONIBLE";
-      lyricsText.textContent = match.plainLyrics || "";
-    }
-
-  } catch (error) {
-    if (requestId !== lyricsRequestId) return;
-
-    lyricsStatus.textContent =
-      error.name === "AbortError"
-        ? "TIEMPO AGOTADO"
-        : "ERROR DE BÚSQUEDA";
-
-    lyricsText.textContent =
-      "No fue posible consultar las letras. Intenta más tarde.";
-
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
-
-function renderSynchronizedLyrics() {
-  lyricsText.innerHTML = "";
-
-  synchronizedLyrics.forEach(line => {
-    const paragraph = document.createElement("p");
-    paragraph.textContent = line.text;
-    paragraph.dataset.time = line.time;
-    lyricsText.appendChild(paragraph);
-  });
-}
-
-radio.addEventListener("timeupdate", () => {
-  if (synchronizedLyrics.length === 0) return;
-
-  const current = radio.currentTime;
-  let activeIndex = -1;
-
-  synchronizedLyrics.forEach((line, index) => {
-    if (line.time <= current) activeIndex = index;
-  });
-
-  const paragraphs = lyricsText.querySelectorAll("p");
-
-  paragraphs.forEach((paragraph, index) => {
-    paragraph.classList.toggle("active", index === activeIndex);
-  });
-});
     async function getAudioFiles(path = "") {
       const { data, error } = await supabaseRadio
         .storage
@@ -1096,6 +1101,7 @@ radio.addEventListener("timeupdate", () => {
         if (item.id === null) {
           const nestedFiles = await getAudioFiles(itemPath);
           files = files.concat(nestedFiles);
+
         } else {
           const extension = item.name
             .split(".")
@@ -1163,7 +1169,9 @@ radio.addEventListener("timeupdate", () => {
 
           button.type = "button";
           button.className = "song-item";
-          button.textContent = song.name;
+
+          // Se muestra el título limpio, pero se conserva song.path.
+          button.textContent = cleanSongTitle(song.name);
 
           button.addEventListener("click", async () => {
             clearStationHighlight();
@@ -1213,8 +1221,9 @@ radio.addEventListener("timeupdate", () => {
       }
 
       const song = songs[currentIndex];
+      const cleanTitle = cleanSongTitle(song.name);
 
-      showMessage("Preparando: " + song.name);
+      showMessage("Preparando: " + cleanTitle);
 
       try {
         resetProgress();
@@ -1232,8 +1241,10 @@ radio.addEventListener("timeupdate", () => {
         await radio.play();
 
         currentSong.textContent =
-          "Reproduciendo: " + song.name;
-loadLyricsForTitle(song.name);
+          "Reproduciendo: " + cleanTitle;
+
+        loadLyricsForTitle(song.name);
+
         stationStatus.textContent = "● REPRODUCIENDO MÚSICA";
 
         showMessage(
@@ -1249,6 +1260,8 @@ loadLyricsForTitle(song.name);
         updatePlayButton(false);
       }
     }
+
+    /* CONTROLES DE REPRODUCCIÓN */
 
     async function startPlayback() {
       if (currentMode === "live") {
@@ -1266,6 +1279,7 @@ loadLyricsForTitle(song.name);
           updatePlayButton(true);
           stationStatus.textContent = "● RADIO EN VIVO";
           showMessage("Conectado a la estación en vivo.");
+
         } catch (error) {
           showMessage("No se pudo iniciar la transmisión.");
           updatePlayButton(false);
@@ -1279,6 +1293,7 @@ loadLyricsForTitle(song.name);
           try {
             await radio.play();
             updatePlayButton(true);
+
           } catch (error) {
             showMessage("No se pudo reanudar la emisora.");
           }
@@ -1292,6 +1307,7 @@ loadLyricsForTitle(song.name);
           await radio.play();
           updatePlayButton(true);
           return;
+
         } catch (error) {
           showMessage("No se pudo reanudar la canción.");
         }
@@ -1326,6 +1342,7 @@ loadLyricsForTitle(song.name);
         }
 
         await playAutomaticSong();
+
       } else {
         showMessage("La transmisión ha terminado.");
       }
