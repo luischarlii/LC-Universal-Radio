@@ -324,6 +324,50 @@
       margin: 6px 0;
     }
 
+    /* EMISORAS PENDIENTES DE AUTORIZACIÓN */
+
+    .pending-stations {
+      margin-top: 20px;
+      padding: 15px;
+      background: #101827;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      text-align: left;
+    }
+
+    .pending-stations h3 {
+      color: #fbbf24;
+      font-size: 15px;
+      margin: 0 0 8px;
+    }
+
+    .pending-station {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: 1px solid #475569;
+      border-radius: 10px;
+      background: #1e293b;
+      color: #cbd5e1;
+      text-align: left;
+      font-size: 13px;
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    .pending-station:disabled {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    .pending-label {
+      display: block;
+      margin-top: 6px;
+      color: #fbbf24;
+      font-size: 11px;
+    }
+
     #supabase-status {
       color: #94a3b8;
       font-size: 12px;
@@ -414,32 +458,31 @@
     <div class="logo">LC UNIVERSAL RADIO</div>
     <p>Tu música, tu estación</p>
 
-<!-- Botón Mercado Pago en la cabecera -->
-<div style="text-align:center; margin:15px auto 20px;">
-  <a href="https://mpago.li/1xwA49D"
-     target="_blank"
-     rel="noopener noreferrer"
-     style="display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            gap:10px;
-            background:#ffffff;
-            color:#009EE3;
-            padding:9px 16px;
-            border:2px solid #009EE3;
-            border-radius:10px;
-            text-decoration:none;
-            font-weight:bold;">
-    <img
-      src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/mercado-pago/default.svg"
-      alt="Mercado Pago"
-      width="32"
-      height="32"
-      style="object-fit:contain;">
-    Si te gusta, ayuda 🫶🏽
-  </a>
-</div>   
-    
+    <!-- Botón Mercado Pago en la cabecera -->
+    <div style="text-align:center; margin:15px auto 20px;">
+      <a href="https://mpago.li/1xwA49D"
+         target="_blank"
+         rel="noopener noreferrer"
+         style="display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                gap:10px;
+                background:#ffffff;
+                color:#009EE3;
+                padding:9px 16px;
+                border:2px solid #009EE3;
+                border-radius:10px;
+                text-decoration:none;
+                font-weight:bold;">
+        <img
+          src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/mercado-pago/default.svg"
+          alt="Mercado Pago"
+          width="32"
+          height="32"
+          style="object-fit:contain;">
+        Si te gusta, ayuda 🫶🏽
+      </a>
+    </div>
   </header>
 
   <main>
@@ -588,6 +631,42 @@
 
           </div>
         </div>
+
+        <!-- NUEVAS EMISORAS: AUDIO DESACTIVADO -->
+
+        <section class="pending-stations">
+          <h3>📻 Próximamente en LC Universal Radio</h3>
+
+          <p class="station-description">
+            Estamos gestionando las autorizaciones para incorporar
+            nuevas emisoras. Su reproducción todavía no está disponible.
+          </p>
+
+          <button
+            type="button"
+            class="pending-station"
+            disabled
+            aria-disabled="true"
+          >
+            📡 Radio Universidad UACH — 105.3 FM
+            <span class="pending-label">
+              Chihuahua · Pendiente de autorización
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="pending-station"
+            disabled
+            aria-disabled="true"
+          >
+            📡 La Ke Buena — 97.7 FM
+            <span class="pending-label">
+              Ojinaga · Pendiente de autorización
+            </span>
+          </button>
+        </section>
+
       </section>
 
       <!-- BIBLIOTECA SUPABASE -->
