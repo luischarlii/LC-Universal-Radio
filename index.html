@@ -460,31 +460,175 @@
     <div class="logo">LC UNIVERSAL RADIO</div>
     <p>Tu música, tu estación</p>
 
-    <!-- Botón Mercado Pago en la cabecera -->
-    <div style="text-align:center; margin:15px auto 20px;">
-      <a href="https://mpago.li/1xwA49D"
-         target="_blank"
-         rel="noopener noreferrer"
-         style="display:inline-flex;
-                align-items:center;
-                justify-content:center;
-                gap:10px;
-                background:#ffffff;
-                color:#009EE3;
-                padding:9px 16px;
-                border:2px solid #009EE3;
-                border-radius:10px;
-                text-decoration:none;
-                font-weight:bold;">
-        <img
-          src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/mercado-pago/default.svg"
-          alt="Mercado Pago"
-          width="32"
-          height="32"
-          style="object-fit:contain;">
-        Si te gusta, ayuda 🫶🏽
-      </a>
+
+<div class="lc-support">
+  <button id="lcDonateBtn" class="lc-support-trigger"
+          aria-expanded="false">
+    <span class="lc-heart">♡</span>
+    <span class="lc-support-text">
+      <strong>Apoya a LC Universal Radio</strong>
+      <small>Donaciones voluntarias</small>
+    </span>
+    <span id="lcArrow">⌄</span>
+  </button>
+
+  <div id="lcDonationDetails" class="lc-support-details" hidden>
+    <div class="lc-bank">
+      <img
+        src="https://http2.mlstatic.com/frontend-assets/mp-web-navigation/ui-navigation/6.6.125/mercadopago/logo__large.png"
+        alt="Mercado Pago"
+      >
+      <strong>Mercado Pago</strong>
     </div>
+
+    <p><strong>Beneficiario:</strong><br>
+      LC Universal Radio</p>
+
+    <p><strong>CLABE interbancaria:</strong></p>
+
+    <div class="lc-clabe">
+      <span id="lcClabe">123456789012345678</span>
+      <button id="lcCopyBtn">Copiar</button>
+    </div>
+
+    <p class="lc-thanks">
+      ¡Gracias por apoyar este proyecto!
+    </p>
+    <small>Tu aportación es completamente voluntaria.</small>
+  </div>
+</div>
+
+<style>
+.lc-support {
+  max-width: 390px;
+  margin: 15px auto;
+  background: #101827;
+  border: 1px solid #34445b;
+  border-radius: 12px;
+  color: white;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+.lc-support-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 14px;
+  background: transparent;
+  border: 0;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lc-heart {
+  color: #d4af37;
+  font-size: 25px;
+}
+
+.lc-support-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.lc-support-text strong {
+  font-size: 13px;
+}
+
+.lc-support-text small {
+  font-size: 11px;
+  color: #aebbd0;
+}
+
+#lcArrow {
+  color: #d4af37;
+  font-size: 20px;
+}
+
+.lc-support-details {
+  border-top: 1px solid #34445b;
+  padding: 15px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.lc-bank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  font-size: 17px;
+}
+
+.lc-bank img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+}
+
+.lc-clabe {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: #1f2937;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+
+#lcCopyBtn {
+  background: #d4af37;
+  color: #101827;
+  border: none;
+  border-radius: 7px;
+  padding: 9px 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.lc-thanks {
+  color: #f5c542;
+  font-weight: bold;
+  margin-top: 17px;
+}
+</style>
+
+<script>
+(() => {
+  const clabe = "123456789012345678";
+  const trigger = document.getElementById("lcDonateBtn");
+  const details = document.getElementById("lcDonationDetails");
+  const arrow = document.getElementById("lcArrow");
+  const copy = document.getElementById("lcCopyBtn");
+
+  trigger.addEventListener("click", () => {
+    const opening = details.hidden;
+    details.hidden = !opening;
+    trigger.setAttribute("aria-expanded", String(opening));
+    arrow.textContent = opening ? "⌃" : "⌄";
+  });
+
+  copy.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(clabe);
+      copy.textContent = "¡Copiada!";
+    } catch {
+      copy.textContent = "Copia manualmente";
+    }
+  });
+})();
+</script>
+
   </header>
 
   <main>
